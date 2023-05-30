@@ -1,17 +1,18 @@
-import repositories.*;
+import Models.Epic;
+import Models.Subtask;
+import Models.Task;
 import services.Manager;
 public class Main {
-
     public static void main(String[] args) {
         Manager manager = new Manager();
         manager.getAllTasks();
         manager.printAllTask();
 
-System.out.println("Вывод задачи по заданному"+manager.getTaskById(0)); //распечатывает задачу по нужному id
-System.out.println("Вывод подзадачи по заданному"+manager.getSubtaskById(3)); //распечатывает подзадачу по нужному id
-System.out.println("Вывод эпика по заданному"+manager.getEpicById(6)); //печать эпика по id
+        System.out.println("Вывод задачи по заданному" + manager.getTaskById(0)); //распечатывает задачу по нужному id
+        System.out.println("Вывод подзадачи по заданному" + manager.getSubtaskById(3)); //распечатывает подзадачу по нужному id
+        System.out.println("Вывод эпика по заданному" + manager.getEpicById(6)); //печать эпика по id
 
-        Task task = new Task () //задаем новую задачу вместо задачи с id = 0
+        Task task = new Task() //задаем новую задачу вместо задачи с id = 0
                 .setId(0)
                 .setName("Позвонить другу")
                 .setDescription("")
@@ -33,28 +34,21 @@ System.out.println("Вывод эпика по заданному"+manager.getEp
         subtask.setEpicID(2);
         manager.saveSubtask(subtask);
         manager.printAllTask();
-
 //Удаление задачи/подзадачи/эпика по заданному id
         manager.removeTaskById(1);
-      //  manager.removeEpicById(6);
-     //   manager.removeSubtaskById(3);
+        manager.removeEpicById(6);
+        manager.removeSubtaskById(3);
 // проверка вывода     manager.printAllTask();
-
- System.out.println(manager.getListSubtask(2)); //печатаем подзадачи эпика по нужному id
-
+        manager.printListSubtaskIdEpic (2);
 //меняем статус задачи
-manager.changeStatusTask(0,"DONE");
+        manager.changeStatusTask(0, "DONE");
 //меняем статус подзадачи
-manager.changeStatusSubtask(4,"DONE");
+        manager.changeStatusSubtask(4, "DONE");
 //меняем статус эпика
-//manager.changeStatusEpic(2);
-manager.changeStatusEpic(6);
+        manager.changeStatusEpic(2);
 //проверка вывода
-manager.printAllTask();
+        manager.printAllTask();
 
     }
-
-
-
 }
 
