@@ -1,6 +1,6 @@
 package repositories;
-import Models.Epic;
-import Models.Task;
+import models.Epic;
+import models.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 

@@ -1,7 +1,7 @@
 package services;
-import Models.Epic;
-import Models.Subtask;
-import Models.Task;
+import models.Epic;
+import models.Subtask;
+import models.Task;
 import repositories.*;
 import java.util.ArrayList;
 public class Manager {

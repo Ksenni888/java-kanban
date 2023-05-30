@@ -1,6 +1,6 @@
-import Models.Epic;
-import Models.Subtask;
-import Models.Task;
+import models.Epic;
+import models.Subtask;
+import models.Task;
 import services.Manager;
 public class Main {
     public static void main(String[] args) {

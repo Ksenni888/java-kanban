@@ -1,6 +1,6 @@
 package repositories;
-import Models.Subtask;
-import Models.Task;
+import models.Subtask;
+import models.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 
