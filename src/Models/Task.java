@@ -4,12 +4,18 @@ public class Task {
     private int id;
     private String name;
     private String description;
-    private String status;
+
+    public Status status;
+    public enum Status {
+        NEW,
+        IN_PROGRESS,
+        DONE;
+    }
 
     public int getId() {
         return this.id;
     }
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
     public Task setId(int id) {
@@ -20,7 +26,7 @@ public class Task {
         this.description = description;
         return this;
     }
-    public Task setStatus(String status) {
+    public Task setStatus(Status status) {
         this.status = status;
         return this;
     }

@@ -16,10 +16,10 @@ public class SubtaskRepository {
     public void removeById(int id) {
         subtasks.remove(id);
     } //удалить подзадачу по id
-    public void changeStatus(int id, String newStatus){ //присвоить новый статус подзадаче по id
+    public void changeStatus(int id, Task.Status status){ //присвоить новый статус подзадаче по id
         for (Subtask subtask: subtasks.values()) {
             if (subtask.getId() == id){
-                subtask.setStatus(newStatus);
+                subtask.setStatus(status);
             }
         }
     }
