@@ -2,16 +2,18 @@ package services;
 import models.Epic;
 import models.Subtask;
 import models.Task;
+import models.Status;
 import repositories.*;
 import java.util.ArrayList;
+import java.util.List;
+
 public class InMemoryTaskManager implements TaskManager{
     private TaskRepository tasksRepository = new TaskRepository();
     private EpicRepository epicRepository = new EpicRepository();
     private SubtaskRepository subtaskRepository = new SubtaskRepository();
     private ArrayList<Task> allTasks = new ArrayList<>();
     private static int COUNT = 0;
-    private InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
-
+    private HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
     @Override
     public void printListSubtaskIdEpic (int id){ //печатаем подзадачи эпика по нужному id
         System.out.println("Все подзадачи эпика с id " + id + getListSubtask(id));
@@ -73,11 +75,11 @@ public class InMemoryTaskManager implements TaskManager{
         subtaskRepository.removeById(id);
     } //удаление подзадачи по id
     @Override
-    public void changeStatusTask(int id, Task.Status status) { //сменить статус задачи по id
+    public void changeStatusTask(int id, models.Status status) { //сменить статус задачи по id
         tasksRepository.changeStatus(id, status);
     }
     @Override
-    public void changeStatusSubtask(int id, Task.Status status) { //сменить статус подзадачи по id
+    public void changeStatusSubtask(int id, models.Status status) { //сменить статус подзадачи по id
         subtaskRepository.changeStatus(id, status);
     }
     @Override
@@ -95,11 +97,11 @@ public class InMemoryTaskManager implements TaskManager{
             }
         }
         if (subtask.size() == i) {
-            (epicRepository.get(id)).setStatus(Task.Status.NEW);
+            (epicRepository.get(id)).setStatus(models.Status.NEW);
         } else if (subtask.size() == k) {
-            (epicRepository.get(id)).setStatus(Task.Status.DONE);
+            (epicRepository.get(id)).setStatus(models.Status.DONE);
         } else {
-            (epicRepository.get(id)).setStatus(Task.Status.IN_PROGRESS);
+            (epicRepository.get(id)).setStatus(models.Status.IN_PROGRESS);
         }
 
     }
@@ -110,26 +112,26 @@ public class InMemoryTaskManager implements TaskManager{
                 .setId(COUNT++)
                 .setName("Позвонить подруге")
                 .setDescription("")
-                .setStatus(Task.Status.IN_PROGRESS);
+                .setStatus(models.Status.IN_PROGRESS);
 
         Task otherTask = new Task()
                 .setId(COUNT++)
                 .setName("Забрать посылку")
                 .setDescription("Забрать посылку на почте")
-                .setStatus(Task.Status.IN_PROGRESS);
+                .setStatus(models.Status.IN_PROGRESS);
 
         Epic epic = new Epic();
         epic.setId(COUNT++);
         epic.setName("Сварить пельмени");
         epic.setDescription("Рецепт пельменей");
-        epic.setStatus(Task.Status.IN_PROGRESS);
+        epic.setStatus(models.Status.IN_PROGRESS);
 
         Subtask subtask = new Subtask();
         subtask.setId(COUNT++);
         epic.setIdSubtask(subtask.getId());
         subtask.setName("Налить воду в кастрюлю");
         subtask.setDescription("Налить воды");
-        subtask.setStatus(Task.Status.IN_PROGRESS);
+        subtask.setStatus(models.Status.IN_PROGRESS);
         subtask.setEpicID(epic.getId());
 
         Subtask subtask2 = new Subtask();
@@ -137,7 +139,7 @@ public class InMemoryTaskManager implements TaskManager{
         epic.setIdSubtask(subtask2.getId());
         subtask2.setName("Дождатья кипения воды");
         subtask2.setDescription("Кипящая вода");
-        subtask2.setStatus(Task.Status.NEW);
+        subtask2.setStatus(models.Status.NEW);
         subtask2.setEpicID(epic.getId());
 
         Subtask subtask4 = new Subtask();
@@ -145,20 +147,20 @@ public class InMemoryTaskManager implements TaskManager{
         epic.setIdSubtask(subtask4.getId());
         subtask4.setName("Бросить пельмени");
         subtask4.setDescription("Пельмени");
-        subtask4.setStatus(Task.Status.NEW);
+        subtask4.setStatus(models.Status.NEW);
         subtask4.setEpicID(epic.getId());
 
         Epic epic2 = new Epic();
         epic2.setId(COUNT++);
         epic2.setName("Погулять с собакой");
         epic2.setDescription("Прогулка");
-        epic2.setStatus(Task.Status.NEW);
+        epic2.setStatus(models.Status.NEW);
 
         Subtask subtask3 = new Subtask();
         subtask3.setId(COUNT++);
         subtask3.setName("Одеться");
         subtask3.setDescription("Одеться по погоде");
-        subtask3.setStatus(Task.Status.NEW);
+        subtask3.setStatus(models.Status.NEW);
         subtask3.setEpicID(epic2.getId());
         epic2.setIdSubtask(subtask3.getId());
 
@@ -211,8 +213,9 @@ public class InMemoryTaskManager implements TaskManager{
     }
     @Override
     public ArrayList<Subtask> getListSubtask(int id) { return subtaskRepository.getListSubtask(id); } //получить список подзадач эпика по id
-
-   }
+    @Override
+    public List<Task> getHistory(int id, Task task) {return InMemoryHistoryManager.viewTask;};
+    }
 
 
 

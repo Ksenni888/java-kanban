@@ -6,8 +6,7 @@ import services.InMemoryHistoryManager;
 import services.InMemoryTaskManager;
 public class Main {
     public static void main(String[] args) {
-        InMemoryTaskManager manager = new InMemoryTaskManager();
-        Managers managerHistory = new Managers();
+        InMemoryTaskManager manager = (InMemoryTaskManager) Managers.getDefault();
         Managers managers = new Managers();
         manager.getAllTasks();
         manager.printAllTask();
@@ -20,21 +19,21 @@ public class Main {
                 .setId(0)
                 .setName("Позвонить другу")
                 .setDescription("")
-                .setStatus(Task.Status.IN_PROGRESS);
+                .setStatus(models.Status.IN_PROGRESS);
         manager.saveTask(task);
 
         Epic epic2 = new Epic(); //задаем новый эпик вместо эпика с id=6
         epic2.setId(6);
         epic2.setName("Погулять с кошкой");
         epic2.setDescription("Прогулка");
-        epic2.setStatus(Task.Status.NEW);
+        epic2.setStatus(models.Status.NEW);
         manager.saveEpic(epic2);
 
         Subtask subtask = new Subtask(); //задаем новую подзадачу вместо подзадачи с id=3
         subtask.setId(3);
         subtask.setName("Налить воды в кастрюлю");
         subtask.setDescription("");
-        subtask.setStatus(Task.Status.DONE);
+        subtask.setStatus(models.Status.DONE);
         subtask.setEpicID(2);
         manager.saveSubtask(subtask);
         manager.printAllTask();
@@ -45,9 +44,9 @@ public class Main {
 // проверка вывода     manager.printAllTask();
         manager.printListSubtaskIdEpic (2);
 //меняем статус задачи
-        manager.changeStatusTask(0, Task.Status.DONE);
+        manager.changeStatusTask(0, models.Status.DONE);
 //меняем статус подзадачи
-        manager.changeStatusSubtask(4, Task.Status.DONE);
+        manager.changeStatusSubtask(4, models.Status.DONE);
 //меняем статус эпика
         manager.changeStatusEpic(2);
 //проверка вывода
@@ -56,7 +55,7 @@ public class Main {
      System.out.println("Вывод задачи по заданному" + manager.getTaskById(0)); //распечатывает задачу по нужному id
      System.out.println("Вывод подзадачи по заданному" + manager.getSubtaskById(3)); //распечатывает подзадачу по нужному id
      System.out.println("Вывод эпика по заданному" + manager.getEpicById(6)); //печать эпика по id
-        managers.getDefaultHistory();
+
     }
 }
 

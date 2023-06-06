@@ -9,7 +9,7 @@ public class TaskRepository {
     public void save(Task task) {tasks.put(task.getId(), task); } //сохранение новой задачи в таблице (замена задачи)
     public void deleteAll() { tasks.clear(); } //удаление всех задач из таблицы
     public void removeById(int id) { tasks.remove(id); } //удаление задачи по id
-    public void changeStatus(int id, Task.Status status){ //смена статуса конкретной задачи по id
+    public void changeStatus(int id, models.Status status){ //смена статуса конкретной задачи по id
         for (Task task: tasks.values()) {
             if (task.getId() == id){
                 task.setStatus(status);

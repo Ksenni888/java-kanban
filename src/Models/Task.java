@@ -4,13 +4,8 @@ public class Task {
     private int id;
     private String name;
     private String description;
-
     public Status status;
-    public enum Status {
-        NEW,
-        IN_PROGRESS,
-        DONE;
-    }
+
 
     public int getId() {
         return this.id;

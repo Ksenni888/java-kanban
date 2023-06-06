@@ -2,7 +2,7 @@ package services;
 import models.Task;
 import java.util.List;
 
-interface HistoryManager {
+public interface HistoryManager {
 
     void add(Task task); //должен помечать задачи как просмотренные
 

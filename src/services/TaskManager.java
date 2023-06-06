@@ -3,6 +3,7 @@ import models.Epic;
 import models.Subtask;
 import models.Task;
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
         void printListSubtaskIdEpic (int id); //печатаем подзадачи эпика по нужному id
@@ -17,8 +18,8 @@ public interface TaskManager {
         void removeTaskById(int id); //удаление задачи по id
         void removeEpicById(int id); //удаление эпика по id
         void removeSubtaskById(int id); //удаление подзадачи по id
-        void changeStatusTask(int id, Task.Status status); //сменить статус задачи по id
-        void changeStatusSubtask(int id, Task.Status status); //сменить статус подзадачи по id
+        void changeStatusTask(int id, models.Status status); //сменить статус задачи по id
+        void changeStatusSubtask(int id, models.Status status); //сменить статус подзадачи по id
         void changeStatusEpic(int id); //изменить статус заданного эпика
         ArrayList<Task> getAllTasks(); //заполнение списка всех задач
         ArrayList<Task> getAllTasks2(); //получить список всех задач
@@ -28,6 +29,7 @@ public interface TaskManager {
         Task getEpicById(int id); //получить эпик по id
         Task getSubtaskById(int id); //получить подзадачу id
         ArrayList<Subtask> getListSubtask(int id); //получить список подзадач эпика по id
+        List<Task> getHistory(int id, Task task);
     }
 
 
