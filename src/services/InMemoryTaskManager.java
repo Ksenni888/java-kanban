@@ -2,7 +2,6 @@ package services;
 import models.Epic;
 import models.Subtask;
 import models.Task;
-import models.Status;
 import repositories.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,15 +63,20 @@ public class InMemoryTaskManager implements TaskManager{
     } //сохранение эпиков в таблицу
     @Override
     public void removeTaskById(int id) { //удаление задачи по id
-        tasksRepository.removeById(id);
+        inMemoryHistoryManager.remove(id);  tasksRepository.removeById(id);
     } //удаление задачи по id
     @Override
     public void removeEpicById(int id) { //удаление эпика по id
+
+        for (Task t: getListSubtask(id)){
+           if (inMemoryHistoryManager.getHistoryHash().containsKey(t.getId())){
+               inMemoryHistoryManager.remove(t.getId());}
+        }
         epicRepository.removeById(id);
     } //удаление эпика по id
     @Override
     public void removeSubtaskById(int id) { //удаление подзадачи по id
-        subtaskRepository.removeById(id);
+        inMemoryHistoryManager.remove(id);  subtaskRepository.removeById(id);
     } //удаление подзадачи по id
     @Override
     public void changeStatusTask(int id, models.Status status) { //сменить статус задачи по id
@@ -180,6 +184,61 @@ public class InMemoryTaskManager implements TaskManager{
         subtaskRepository.save(subtask3);
         subtaskRepository.save(subtask4);
 
+
+     // Задание спринта 5:
+        // создать 2 задачи
+        Task task9 = new Task() //задаем новую задачу вместо задачи с id = 0
+                .setId(9)
+                .setName("Помыть посуду")
+                .setDescription("")
+                .setStatus(models.Status.IN_PROGRESS);
+        tasksRepository.save(task9);
+        Task task10 = new Task() //задаем новую задачу вместо задачи с id = 0
+                .setId(10)
+                .setName("Помыть посуду")
+                .setDescription("")
+                .setStatus(models.Status.IN_PROGRESS);
+        tasksRepository.save(task10);
+        //эпик с 3 подзадачами
+        Epic epic11 = new Epic(); //задаем новый эпик вместо эпика с id=6
+        epic11.setId(11);
+        epic11.setName("Собрать вещи для переезда");
+        epic11.setDescription("Прогулка");
+        epic11.setStatus(models.Status.NEW);
+        epicRepository.save(epic11);
+        //3 подзадачи эпика
+        Subtask subtask12 = new Subtask(); //задаем новую подзадачу вместо подзадачи с id=3
+        subtask12.setId(12);
+        subtask12.setName("Приготовить чемоданы");
+        subtask12.setDescription("");
+        subtask12.setStatus(models.Status.DONE);
+        subtask12.setEpicID(11);
+        subtaskRepository.save(subtask12);
+
+        Subtask subtask13 = new Subtask(); //задаем новую подзадачу вместо подзадачи с id=3
+        subtask13.setId(13);
+        subtask13.setName("Собрать вещи");
+        subtask13.setDescription("");
+        subtask13.setStatus(models.Status.DONE);
+        subtask13.setEpicID(11);
+        subtaskRepository.save(subtask13);
+
+        Subtask subtask14 = new Subtask(); //задаем новую подзадачу вместо подзадачи с id=3
+        subtask14.setId(14);
+        subtask14.setName("Упаковать вещи");
+        subtask14.setDescription("");
+        subtask14.setStatus(models.Status.DONE);
+        subtask14.setEpicID(11);
+        subtaskRepository.save(subtask14);
+        //эпик без подзадач
+        Epic epic15 = new Epic(); //задаем новый эпик вместо эпика с id=6
+        epic15.setId(15);
+        epic15.setName("Вызвать такси");
+        epic15.setDescription("Прогулка");
+        epic15.setStatus(models.Status.NEW);
+        epicRepository.save(epic15);
+
+
         return allTasks;
     }
     @Override
@@ -197,18 +256,18 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public Task getTaskById(int id) { //получить задачу по id
         inMemoryHistoryManager.add(tasksRepository.get(id));
-        inMemoryHistoryManager.getHistory(id, tasksRepository.get(id));
+     //   inMemoryHistoryManager.getHistory(id, tasksRepository.get(id));
         return tasksRepository.get(id);
     }
     @Override
     public Task getEpicById(int id) { //получить эпик по id
         inMemoryHistoryManager.add(epicRepository.get(id));
-        inMemoryHistoryManager.getHistory(id, epicRepository.get(id));
+      //  inMemoryHistoryManager.getHistory(id, epicRepository.get(id));
         return epicRepository.get(id); }
     @Override
     public Task getSubtaskById(int id) { //получить подзадачу по id
         inMemoryHistoryManager.add(subtaskRepository.get(id));
-        inMemoryHistoryManager.getHistory(id, subtaskRepository.get(id));
+       // inMemoryHistoryManager.getHistory(id, subtaskRepository.get(id));
         return subtaskRepository.get(id);
     }
     @Override

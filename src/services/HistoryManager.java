@@ -1,10 +1,12 @@
 package services;
 import models.Task;
+import java.util.HashMap;
 import java.util.List;
 
 public interface HistoryManager {
 
     void add(Task task); //должен помечать задачи как просмотренные
-
-    List<Task> getHistory(int id, Task task); //возвращает список просмотренных задач
+    void remove(int id);
+    List<Task> getHistory(); //возвращает список просмотренных задач
+    HashMap<Integer, InMemoryHistoryManager.Node<Task>> getHistoryHash();
 }
