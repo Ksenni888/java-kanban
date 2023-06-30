@@ -5,12 +5,13 @@ import services.TaskManager;
 
 
 public class Managers {
-  public static TaskManager getDefault(){return new InMemoryTaskManager();
-  }
+    public static TaskManager getDefault() {
+        return new InMemoryTaskManager();
+    }
 
-  public static services.HistoryManager getDefaultHistory() {
-    return new InMemoryHistoryManager();
-  }
+    public static services.HistoryManager getDefaultHistory() {
+        return new InMemoryHistoryManager();
+    }
 }
 
 

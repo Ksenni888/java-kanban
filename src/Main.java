@@ -4,15 +4,16 @@ import models.Task;
 import repositories.Managers;
 import services.InMemoryHistoryManager;
 import services.InMemoryTaskManager;
+
 public class Main {
     public static void main(String[] args) {
         InMemoryTaskManager manager = (InMemoryTaskManager) Managers.getDefault();
-        InMemoryHistoryManager historyManager = (InMemoryHistoryManager)Managers.getDefaultHistory();
+        InMemoryHistoryManager historyManager = (InMemoryHistoryManager) Managers.getDefaultHistory();
         Managers managers = new Managers();
         manager.getAllTasks();
-     //   manager.printAllTask();
+        //   manager.printAllTask();
 
-               Task task = new Task() //задаем новую задачу вместо задачи с id = 0
+        Task task = new Task() //задаем новую задачу вместо задачи с id = 0
                 .setId(0)
                 .setName("Позвонить другу")
                 .setDescription("")
@@ -35,9 +36,9 @@ public class Main {
         subtask.setEpicID(2);
         manager.saveSubtask(subtask);
 
-       // проверка вывода всех задач manager.printAllTask();
-      //  список всех подзадач эпика manager.printListSubtaskIdEpic (2);
-      // поменять статус задачи  manager.changeStatusTask(0, models.Status.DONE);
+        // проверка вывода всех задач manager.printAllTask();
+        //  список всех подзадач эпика manager.printListSubtaskIdEpic (2);
+        // поменять статус задачи  manager.changeStatusTask(0, models.Status.DONE);
 
 
         System.out.println("Вывод подзадачи по заданному" + manager.getSubtaskById(14)); //эпик 11

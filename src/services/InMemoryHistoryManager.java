@@ -1,22 +1,25 @@
 package services;
+
 import models.Task;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class InMemoryHistoryManager implements HistoryManager{
+public class InMemoryHistoryManager implements HistoryManager {
     private Node<Task> head;
     private Node<Task> tail;
     private int size = 0;
     protected static List<Task> viewTask = new ArrayList<>();
     public HashMap<Integer, Node<Task>> historyHash = new HashMap<>();
+
     class Node<E> {
 
         private E data;
         public Node<E> next;
         public Node<E> prev;
 
-        public Node(E data){
+        public Node(E data) {
             this(null, data, null);
         }
 
@@ -39,6 +42,7 @@ public class InMemoryHistoryManager implements HistoryManager{
         return newNode;
 
     }
+
     public void removeNode(Node<Task> node) {
         final Task task = node.data;
         final Node<Task> next = node.next;
@@ -52,7 +56,7 @@ public class InMemoryHistoryManager implements HistoryManager{
         }
 
         if (node.next == null) {
-            tail=prev;
+            tail = prev;
         } else {
             next.prev = prev;
             node.next = null;
@@ -69,9 +73,10 @@ public class InMemoryHistoryManager implements HistoryManager{
             historyTasks.add(newNode.data);
             newNode = newNode.next;
         }
-      System.out.println("История просмотра задач: " + historyTasks);
+        System.out.println("История просмотра задач: " + historyTasks);
         return historyTasks;
     }
+
     public HashMap<Integer, Node<Task>> getHistoryHash() {
         return historyHash;
     }
@@ -82,7 +87,7 @@ public class InMemoryHistoryManager implements HistoryManager{
     }
 
     @Override
-    public void add(Task task){ //метод, формирующий список всех просмотренных задач
+    public void add(Task task) { //метод, формирующий список всех просмотренных задач
         if (historyHash.containsKey(task.getId())) {
             remove(task.getId());
             getTasks();
@@ -92,8 +97,8 @@ public class InMemoryHistoryManager implements HistoryManager{
     }
 
     @Override
-  public List<Task> getHistory() {
-      return getTasks();
-  }
+    public List<Task> getHistory() {
+        return getTasks();
+    }
 
 }
