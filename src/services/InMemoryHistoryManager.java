@@ -8,11 +8,11 @@ public class InMemoryHistoryManager implements HistoryManager{
     private Node<Task> head;
     private Node<Task> tail;
     private int size = 0;
-    public static List<Task> viewTask = new ArrayList<>();
+    protected static List<Task> viewTask = new ArrayList<>();
     public HashMap<Integer, Node<Task>> historyHash = new HashMap<>();
     class Node<E> {
 
-        public E data;
+        private E data;
         public Node<E> next;
         public Node<E> prev;
 

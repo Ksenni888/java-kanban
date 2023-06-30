@@ -50,6 +50,7 @@ public class Main {
         System.out.println("Вывод подзадачи по заданному" + manager.getSubtaskById(14));
         manager.removeEpicById(11);
         System.out.println("Вывод эпика по заданному" + manager.getEpicById(15));
+
     }
 }
 
