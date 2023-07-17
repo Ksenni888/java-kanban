@@ -7,13 +7,18 @@ import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
+
     private Node<Task> head;
     private Node<Task> tail;
     private int size = 0;
     protected static List<Task> viewTask = new ArrayList<>();
-    public HashMap<Integer, Node<Task>> historyHash = new HashMap<>();
+    static public HashMap<Integer, Node<Task>> historyHash = new HashMap<>();
 
-    class Node<E> {
+    public class Node<E> { //изменила на public
+
+        public E getData() { //создала геттер
+            return data;
+        }
 
         private E data;
         public Node<E> next;
@@ -66,14 +71,29 @@ public class InMemoryHistoryManager implements HistoryManager {
         size--;
     }
 
+
+    private static ArrayList<Task> historyTasksFinal = new ArrayList<>();
+
+    public void setHis2(ArrayList<Task> his2) {
+        this.historyTasksFinal = his2;
+    }
+
+    public ArrayList<Task> getHis2() {
+        return historyTasksFinal;
+    }
+
+    public Node<Task> getHead() { //создала геттер
+        return head;
+    }
+
     public ArrayList<Task> getTasks() { //собирает все задачи из двусвязного в обычный ArrayList
         ArrayList<Task> historyTasks = new ArrayList<>();
         Node<Task> newNode = head;
         while (newNode != null) {
             historyTasks.add(newNode.data);
+            setHis2(historyTasks);
             newNode = newNode.next;
         }
-        System.out.println("История просмотра задач: " + historyTasks);
         return historyTasks;
     }
 
@@ -84,6 +104,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override //удаление задачи из двусвязного списка истории просмотров
     public void remove(int id) {
         removeNode(historyHash.get(id));
+        historyHash.remove(id);
     }
 
     @Override
@@ -98,7 +119,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
-        return getTasks();
+        return getHis2();
     }
 
 }

@@ -42,7 +42,7 @@ public interface TaskManager {
 
     ArrayList<Task> getAllTasks2(); //получить список всех задач
 
-    ArrayList<Task> getAllSubtasks(); //получить список всех подзадач
+    ArrayList<Subtask> getAllSubtasks(); //получить список всех подзадач
 
     ArrayList<Task> getAllEpics(); //получить список всех эпиков
 

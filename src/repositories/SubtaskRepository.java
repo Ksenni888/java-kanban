@@ -11,7 +11,8 @@ public class SubtaskRepository {
 
     public void save(Subtask subtask) { //сохраняет подзадачи в таблицу
         subtasks.put(subtask.getId(), subtask);
-    }//сохранить подзадачу в таблицу
+        setIdEpic(subtask.getEpicID());
+    }
 
     public void deleteAll() { //удалить все подзадачи из таблицы
         subtasks.clear();
@@ -43,9 +44,19 @@ public class SubtaskRepository {
         return subtasks.get(id);
     } //вернуть подзадачу по id
 
-    public ArrayList<Task> getAll() { //вывести список всех подзадач
-        ArrayList<Task> subtaskFromHash = new ArrayList<>();
-        for (Task tas : subtasks.values()) {
+    private int epicId;//добавила
+
+    public int getIdEpic() {//добавила
+        return epicId;
+    }
+
+    public void setIdEpic(int epicId) {//добавила
+        this.epicId = epicId;
+    }
+
+    public ArrayList<Subtask> getAll() { //вывести список всех подзадач
+        ArrayList<Subtask> subtaskFromHash = new ArrayList<>();
+        for (Subtask tas : subtasks.values()) {
             subtaskFromHash.add(tas);
         }
         return subtaskFromHash;
