@@ -61,8 +61,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             fileWriter.write(result.substring(1, result.length() - 1));
             System.out.println("История просмотра: " + result.substring(1, result.length() - 1));
             fileWriter.close();
-        } catch (ManagerSaveException | IOException e) {
-            System.out.println(e.getMessage());
+        } catch (ManagerSaveException | IOException e) {System.out.println(e.getMessage());
         }
     }
 
