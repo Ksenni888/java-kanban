@@ -9,6 +9,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static services.InMemoryHistoryManager.historyHash;
+
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final File file;
@@ -18,14 +20,26 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         this.file = file;
     }
 
-    InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
-    InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
+    protected InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
+    protected InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
+
+    class ManagerSaveException extends Exception {
+        public ManagerSaveException(final String message) {
+            super(message);
+        }
+
+    }
 
     public void save() {
+
         try {
+            if (!(file.getPath()).equals("file.csv")) {
+                throw new ManagerSaveException("Отказано в доступе " + file);
+            }
             FileWriter fileWriter = new FileWriter(file);
             System.out.println("id,type,name,status,description,epic");
             fileWriter.write("id,type,name,status,description,epic\n");
+
             for (Task task2 : inMemoryTaskManager.getAllTasks2()) {
                 System.out.println(task2.getId() + "," + Enum.TASK + "," + task2.getName() + "," + task2.getStatus() + "," + task2.getDescription());
                 fileWriter.write(task2.getId() + "," + Enum.TASK + "," + task2.getName() + "," + task2.getStatus() + "," + task2.getDescription() + "," + task2.getId() + "\n");
@@ -34,25 +48,32 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             for (Task epic3 : inMemoryTaskManager.getAllEpics()) {
                 System.out.println(epic3.getId() + "," + Enum.EPIC + "," + epic3.getName() + "," + epic3.getStatus() + "," + epic3.getDescription());
                 fileWriter.write(epic3.getId() + "," + Enum.EPIC + "," + epic3.getName() + "," + epic3.getStatus() + "," + epic3.getDescription() + "," + epic3.getId() + "\n");
+                //    throw new ManagerSaveException ("Ошибка записи эпиков в файл");
             }
+
             for (Subtask subtask2 : inMemoryTaskManager.getAllSubtasks()) {
                 System.out.println(subtask2.getId() + "," + Enum.SUBTASK + "," + subtask2.getName() + "," + subtask2.getStatus() + "," + subtask2.getDescription() + "," + subtask2.getEpicID());
                 fileWriter.write(subtask2.getId() + "," + Enum.SUBTASK + "," + subtask2.getName() + "," + subtask2.getStatus() + "," + subtask2.getDescription() + "," + subtask2.getEpicID() + "\n");
-
+                //    throw new ManagerSaveException ("Ошибка записи подзадач в файл");
             }
             fileWriter.write("\n");
             String result = getInMemoryHistoryManager().getHistoryHash().keySet().toString();
             fileWriter.write(result.substring(1, result.length() - 1));
             System.out.println("История просмотра: " + result.substring(1, result.length() - 1));
             fileWriter.close();
-        } catch (IOException e) {
-            System.out.println("Ошибка записи");
+
+        } catch (ManagerSaveException | IOException e) {
+            System.out.println(e.getMessage());
         }
     }
 
-    public void loadFromFile(String path) {
+
+    public void loadFromFile(File file) {
+        TaskRepository tasks = new TaskRepository();
+        SubtaskRepository subtaskRepository = new SubtaskRepository();
+        EpicRepository epicRepository = new EpicRepository();
         try {
-            String content = Files.readString(Paths.get(path));
+            String content = Files.readString(Paths.get(file.getPath()));
             String[] str = content.split("\n");
             for (int i = 1; i < str.length - 2; i++) {
                 String str1 = str[i];
@@ -69,16 +90,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     task.setName(name);
                     task.setStatus(Status.valueOf(status));
                     task.setDescription(description);
-                    allTasks.add(task);
-                    System.out.println("Вывод задачи из файла: " + task); // проверка вывода информации, загруженной в файл
+                    tasksRepository.save(task);
                 }
                 if (type.equals("EPIC")) {
-                    Task epics = new Task();
+                    Epic epics = new Epic();
                     epics.setId(id);
                     epics.setName(name);
                     epics.setStatus(Status.valueOf(status));
                     epics.setDescription(description);
-                    inMemoryTaskManager.getAllEpics().add(epics);
+                    epicRepository.save(epics);
                 }
                 if (type.equals("SUBTASK")) {
                     Subtask subtask = new Subtask();
@@ -87,20 +107,22 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     subtask.setStatus(Status.valueOf(status));
                     subtask.setDescription(description);
                     subtask.setEpicID(epic);
-                    inMemoryTaskManager.getAllSubtasks().add(subtask);
+                    subtaskRepository.save(subtask);
                 }
             }
-            String str1 = getInMemoryHistoryManager().getHistoryHash().keySet().toString();
-            String[] result = str1.substring(1, str1.length() - 1).split(", ");
-            
-            for (Task task : allTasks) {
-                for (int j = 0; j < result.length; j++) {
-                    if (Integer.parseInt(result[j]) == (task.getId())) {
-                        getInMemoryHistoryManager().getHistoryHash().put(task.getId(), inMemoryHistoryManager.linkLast(task));
-                        // System.out.println(getInMemoryHistoryManager().getHistoryHash().put(task.getId(), inMemoryHistoryManager.linkLast(task)));
+            System.out.println("Вывод задачи из файла: " + tasksRepository.getTasks());
+            System.out.println("Вывод подзадач из файла: " + subtaskRepository.getSubtasks());
+            System.out.println("Вывод эпиков из файла: " + epicRepository.getEpics());
+            String[] str1 = str[str.length - 1].split(", ");
+            for (int k = 0; k < str1.length; k++) {
+                for (Task task : getAllTasks()) {
+                    if (Integer.parseInt(str1[k]) == task.getId()) {
+                        historyHash.put(task.getId(), inMemoryHistoryManager.linkLast(task));
                     }
                 }
+
             }
+            System.out.println("Задачи из истории: " + historyHash.keySet() + historyHash.values());
 
         } catch (IOException e) {
             System.out.println("Нет данных в файле");
@@ -108,7 +130,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static void main(String[] args) {
-        File file = new File( "file.csv");
+        InMemoryTaskManager manager = (InMemoryTaskManager) Managers.getDefault();
+        /* Тут создаем файл из задач, в главном main загружаются задачи в программу из этого файла*/
+
+        File file = new File("file.csv");
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file);
         Task task6 = new Task()
                 .setId(1)
@@ -145,10 +170,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         InMemoryTaskManager.subtaskRepository.save(subtask10);
         InMemoryTaskManager.allTasks.add(subtask10);
 
-        System.out.println("Вывод эпика по заданному id: " + fileBackedTasksManager.getTaskById(1));
-        System.out.println("Вывод подзадачи по заданному id: " + fileBackedTasksManager.getSubtaskById(3));
+        System.out.println("Вывод эпика по заданному id: " + manager.getEpicById(2));
+        System.out.println("Вывод подзадачи по заданному id: " + manager.getSubtaskById(4));
         fileBackedTasksManager.save();
-        fileBackedTasksManager.loadFromFile("file.csv");
+
     }
 
 

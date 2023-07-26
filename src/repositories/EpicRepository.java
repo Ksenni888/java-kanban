@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class EpicRepository {
+    public HashMap<Integer, Epic> getEpics() {
+        return epics;
+    }
+
     private HashMap<Integer, Epic> epics = new HashMap<>();
 
     public void save(Epic epic) { //сохранение эпика (перезапись эпика по id)

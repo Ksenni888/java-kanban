@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TaskRepository {
+    public HashMap<Integer, Task> getTasks() {
+        return tasks;
+    }
+
     private HashMap<Integer, Task> tasks = new HashMap<>();
 
     public void save(Task task) {

@@ -7,6 +7,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SubtaskRepository {
+    public HashMap<Integer, Subtask> getSubtasks() {
+        return subtasks;
+    }
+
+    public int getEpicId() {
+        return epicId;
+    }
+
     private HashMap<Integer, Subtask> subtasks = new HashMap<>();
 
     public void save(Subtask subtask) { //сохраняет подзадачи в таблицу
