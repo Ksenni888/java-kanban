@@ -123,10 +123,10 @@ public class InMemoryTaskManager implements TaskManager {
         ArrayList<Subtask> subtask = subtaskRepository.getListSubtask(id);
         for (Subtask sub : subtask) {
 
-            if (sub.getStatus().equals("NEW")) {
+            if ((sub.getStatus()).toString().equals("NEW")) {
                 i++;
             }
-            if (sub.getStatus().equals("DONE")) {
+            if ((sub.getStatus()).toString().equals("DONE")) {
                 k++;
             }
         }
@@ -140,8 +140,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     }
 
-    @Override
-    public ArrayList<Task> getAllTasks() { //заполнение списка всех задач
+
+    public static ArrayList<Task> getAllTasks() { //заполнение списка всех задач
         Task task = new Task()
                 .setId(COUNT++)
                 .setName("Позвонить подруге")

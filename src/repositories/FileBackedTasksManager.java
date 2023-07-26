@@ -20,8 +20,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         this.file = file;
     }
 
-    protected InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
-    protected InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
+    protected static InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
+    protected static InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
 
     class ManagerSaveException extends Exception {
         public ManagerSaveException(final String message) {
@@ -34,7 +34,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
         try {
             if (!(file.getPath()).equals("file.csv")) {
-                throw new ManagerSaveException("Отказано в доступе " + file);
+                throw new ManagerSaveException("Неверный путь к файлу  " + file);
             }
             FileWriter fileWriter = new FileWriter(file);
             System.out.println("id,type,name,status,description,epic");
@@ -48,27 +48,26 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             for (Task epic3 : inMemoryTaskManager.getAllEpics()) {
                 System.out.println(epic3.getId() + "," + Enum.EPIC + "," + epic3.getName() + "," + epic3.getStatus() + "," + epic3.getDescription());
                 fileWriter.write(epic3.getId() + "," + Enum.EPIC + "," + epic3.getName() + "," + epic3.getStatus() + "," + epic3.getDescription() + "," + epic3.getId() + "\n");
-                //    throw new ManagerSaveException ("Ошибка записи эпиков в файл");
+
             }
 
             for (Subtask subtask2 : inMemoryTaskManager.getAllSubtasks()) {
                 System.out.println(subtask2.getId() + "," + Enum.SUBTASK + "," + subtask2.getName() + "," + subtask2.getStatus() + "," + subtask2.getDescription() + "," + subtask2.getEpicID());
                 fileWriter.write(subtask2.getId() + "," + Enum.SUBTASK + "," + subtask2.getName() + "," + subtask2.getStatus() + "," + subtask2.getDescription() + "," + subtask2.getEpicID() + "\n");
-                //    throw new ManagerSaveException ("Ошибка записи подзадач в файл");
+
             }
             fileWriter.write("\n");
             String result = getInMemoryHistoryManager().getHistoryHash().keySet().toString();
             fileWriter.write(result.substring(1, result.length() - 1));
             System.out.println("История просмотра: " + result.substring(1, result.length() - 1));
             fileWriter.close();
-
         } catch (ManagerSaveException | IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
 
-    public void loadFromFile(File file) {
+    public static void loadFromFile(File file) {
         TaskRepository tasks = new TaskRepository();
         SubtaskRepository subtaskRepository = new SubtaskRepository();
         EpicRepository epicRepository = new EpicRepository();
@@ -120,7 +119,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         historyHash.put(task.getId(), inMemoryHistoryManager.linkLast(task));
                     }
                 }
-
             }
             System.out.println("Задачи из истории: " + historyHash.keySet() + historyHash.values());
 

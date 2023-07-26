@@ -38,7 +38,7 @@ public interface TaskManager {
 
     void changeStatusEpic(int id); //изменить статус заданного эпика
 
-    ArrayList<Task> getAllTasks(); //заполнение списка всех задач
+    //ArrayList<Task> getAllTasks(); //заполнение списка всех задач
 
     ArrayList<Task> getAllTasks2(); //получить список всех задач
 

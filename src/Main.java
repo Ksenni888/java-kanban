@@ -15,7 +15,7 @@ public class Main {
         File file = new File("file.csv");
         fileBackedTasksManager.loadFromFile(file);
 
-       /*Код ниже может пригодится:
+       /*Код ниже может пригодиться:
        InMemoryTaskManager manager = (InMemoryTaskManager) Managers.getDefault();
        InMemoryHistoryManager historyManager = (InMemoryHistoryManager) Managers.getDefaultHistory();
        Managers managers = new Managers();
