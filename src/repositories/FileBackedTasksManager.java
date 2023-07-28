@@ -23,19 +23,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     protected static InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
     protected static InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
 
-    class ManagerSaveException extends Exception {
+    public static class ManagerSaveException extends RuntimeException {
         public ManagerSaveException(final String message) {
             super(message);
         }
-
     }
 
     public void save() {
 
         try {
-            if (!(file.getPath()).equals("file.csv")) {
-                throw new ManagerSaveException("Неверный путь к файлу  " + file);
-            }
             FileWriter fileWriter = new FileWriter(file);
             System.out.println("id,type,name,status,description,epic");
             fileWriter.write("id,type,name,status,description,epic\n");
@@ -61,7 +57,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             fileWriter.write(result.substring(1, result.length() - 1));
             System.out.println("История просмотра: " + result.substring(1, result.length() - 1));
             fileWriter.close();
-        } catch (ManagerSaveException | IOException e) {System.out.println(e.getMessage());
+        } catch (IOException e) {
+            throw new ManagerSaveException("Не удалось сохранить данные в файл");
         }
     }
 
@@ -122,12 +119,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             System.out.println("Задачи из истории: " + historyHash.keySet() + historyHash.values());
 
         } catch (IOException e) {
-            System.out.println("Нет данных в файле");
+            throw new ManagerSaveException("Не удалось загрузить данные из файла");
         }
     }
 
     public static void main(String[] args) {
         InMemoryTaskManager manager = (InMemoryTaskManager) Managers.getDefault();
+
         /* Тут создаем файл из задач, в главном main загружаются задачи в программу из этого файла*/
 
         File file = new File("file.csv");
