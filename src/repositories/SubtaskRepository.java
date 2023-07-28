@@ -52,7 +52,7 @@ public class SubtaskRepository {
         return subtasks.get(id);
     } //вернуть подзадачу по id
 
-    private int epicId;//добавила
+    private int epicId;
 
     public int getIdEpic() {//добавила
         return epicId;
