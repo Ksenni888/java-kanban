@@ -1,5 +1,6 @@
 package repositories;
 
+import exceptions.ManagerSaveException;
 import models.*;
 import models.Enum;
 import services.InMemoryHistoryManager;
@@ -23,11 +24,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     protected static InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
     protected static InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
 
-    public static class ManagerSaveException extends RuntimeException {
-        public ManagerSaveException(final String message) {
-            super(message);
-        }
-    }
 
     public void save() {
 
