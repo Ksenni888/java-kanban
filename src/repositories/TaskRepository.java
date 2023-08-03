@@ -1,9 +1,8 @@
 package repositories;
-
 import models.Task;
-
 import java.util.ArrayList;
 import java.util.HashMap;
+
 
 public class TaskRepository {
     public HashMap<Integer, Task> getTasks() {
@@ -13,6 +12,7 @@ public class TaskRepository {
     private HashMap<Integer, Task> tasks = new HashMap<>();
 
     public void save(Task task) {
+
         tasks.put(task.getId(), task);
     } //сохранение новой задачи в таблице (замена задачи)
 

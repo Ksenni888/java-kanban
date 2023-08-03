@@ -11,7 +11,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     private Node<Task> head;
     private Node<Task> tail;
     private int size = 0;
-    protected static List<Task> viewTask = new ArrayList<>();
+
     static public HashMap<Integer, Node<Task>> historyHash = new HashMap<>();
 
     public class Node<E> { //изменила на public
@@ -49,33 +49,37 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     public void removeNode(Node<Task> node) {
-        final Task task = node.data;
-        final Node<Task> next = node.next;
-        final Node<Task> prev = node.prev;
+        if (node != null) {
+            final Task task = node.data;
+            final Node<Task> next = node.next;
+            final Node<Task> prev = node.prev;
 
-        if (node.prev == null) {
-            head = next;
-        } else {
-            prev.next = next;
-            node.prev = null;
+            if (node.prev == null) {
+                head = next;
+            } else {
+                prev.next = next;
+                node.prev = null;
+            }
+
+            if (node.next == null) {
+                tail = prev;
+            } else {
+                next.prev = prev;
+                node.next = null;
+            }
+
+            node.data = null;
+            size--;
         }
-
-        if (node.next == null) {
-            tail = prev;
-        } else {
-            next.prev = prev;
-            node.next = null;
-        }
-
-        node.data = null;
-        size--;
     }
 
 
     private static ArrayList<Task> historyTasksFinal = new ArrayList<>();
 
     public void setHis2(ArrayList<Task> his2) {
+
         this.historyTasksFinal = his2;
+
     }
 
     public ArrayList<Task> getHis2() {
@@ -90,8 +94,10 @@ public class InMemoryHistoryManager implements HistoryManager {
         ArrayList<Task> historyTasks = new ArrayList<>();
         Node<Task> newNode = head;
         while (newNode != null) {
-            historyTasks.add(newNode.data);
-            setHis2(historyTasks);
+            if (!historyTasks.contains(newNode.data)) {
+                historyTasks.add(newNode.data);
+                setHis2(historyTasks);
+            }
             newNode = newNode.next;
         }
         return historyTasks;
@@ -102,24 +108,29 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override //удаление задачи из двусвязного списка истории просмотров
-    public void remove(int id) {
-        removeNode(historyHash.get(id));
-        historyHash.remove(id);
+    public void remove(Task task) {
+        removeNode(historyHash.get(task.getId()));
+        historyHash.remove(task.getId());
+        historyTasksFinal.remove(task);
+
+
     }
 
     @Override
     public void add(Task task) { //метод, формирующий список всех просмотренных задач
-        if (historyHash.containsKey(task.getId())) {
-            remove(task.getId());
+        if (task != null) {
+            if (historyHash.containsKey(task.getId())) {
+                historyHash.put(task.getId(), linkLast(task));
+            } else {
+                historyHash.put(task.getId(), linkLast(task));
+            }
             getTasks();
         }
-        historyHash.put(task.getId(), linkLast(task));
-        getTasks();
     }
 
     @Override
     public List<Task> getHistory() {
-        return getHis2();
+        return historyTasksFinal;
     }
 
 }

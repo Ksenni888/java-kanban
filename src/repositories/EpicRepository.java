@@ -17,17 +17,15 @@ public class EpicRepository {
         epics.put(epic.getId(), epic);
     } //сохранение всех эпиков в таблицу
 
-    public void deleteAll() {
-        epics.clear();
-    }  //удалить все эпики из таблицы
+    public void deleteAll() { epics.clear();  }  //удалить все эпики из таблицы
 
     public void removeById(int id) { //удалить эпик из таблицы по id
         epics.remove(id);
     }
 
-    public ArrayList<Task> getAll() { //список всех эпиков
-        ArrayList<Task> EpicsFromHash = new ArrayList<>();
-        for (Task tas : epics.values()) {
+    public ArrayList<Epic> getAll() { //список всех эпиков
+        ArrayList<Epic> EpicsFromHash = new ArrayList<>();
+        for (Epic tas : epics.values()) {
             EpicsFromHash.add(tas);
         }
         return EpicsFromHash;

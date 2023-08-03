@@ -10,13 +10,12 @@ public interface HistoryManager {
 
     void add(Task task); //должен помечать задачи как просмотренные
 
-    void remove(int id);
+  //  void remove(int id);
+    void remove(Task task);
 
     List<Task> getHistory(); //возвращает список просмотренных задач
 
     HashMap<Integer, InMemoryHistoryManager.Node<Task>> getHistoryHash();
-
-    public InMemoryHistoryManager.Node<Task> getHead(); //создала новый метод
 
     public ArrayList<Task> getHis2();
 }

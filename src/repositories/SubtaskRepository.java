@@ -6,6 +6,7 @@ import models.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
 public class SubtaskRepository {
     public HashMap<Integer, Subtask> getSubtasks() {
         return subtasks;
@@ -15,7 +16,7 @@ public class SubtaskRepository {
         return epicId;
     }
 
-    private HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private static HashMap<Integer, Subtask> subtasks = new HashMap<>();
 
     public void save(Subtask subtask) { //сохраняет подзадачи в таблицу
         subtasks.put(subtask.getId(), subtask);
@@ -24,7 +25,7 @@ public class SubtaskRepository {
 
     public void deleteAll() { //удалить все подзадачи из таблицы
         subtasks.clear();
-    } //удалить все подзадачи из таблицы подзадач
+    }
 
     public void removeById(int id) {
         subtasks.remove(id);
@@ -52,7 +53,7 @@ public class SubtaskRepository {
         return subtasks.get(id);
     } //вернуть подзадачу по id
 
-    private int epicId;
+    private int epicId;//добавила
 
     public int getIdEpic() {//добавила
         return epicId;

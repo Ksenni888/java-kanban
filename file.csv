@@ -1,7 +1,5 @@
-id,type,name,status,description,epic
-1,TASK,Отвести ребенка в садик,IN_PROGRESS,Отвести ребенка в садик,1
-2,EPIC,Сделать уборку,IN_PROGRESS,Сделать уборку,2
-3,SUBTASK,Вымыть полы,IN_PROGRESS,Вымыть полы,2
-4,SUBTASK,Протереть пыль,NEW,Протереть пыль,0
+id,type,name,status,description,epic,startTime,duration,endTime
+1,TASK,Отвести ребенка в садик,IN_PROGRESS,Отвести ребенка в садик,1,5001-01-01T00:00,2,5001-01-01T00:02
+2,EPIC,Сделать уборку,IN_PROGRESS,Сделать уборку,2,2028-08-02T00:00,0,2000-08-02T00:00
 
-2, 4
+2
