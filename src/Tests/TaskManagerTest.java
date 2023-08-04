@@ -22,8 +22,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-class TaskManagerTest <T extends TaskManager> extends InMemoryTaskManager {
-    InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
+class TaskManagerTest<T extends TaskManager> extends InMemoryTaskManager {
+    private InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
 
     @Test
     public void printListSubtaskIdEpicStandart() {
@@ -88,18 +88,19 @@ class TaskManagerTest <T extends TaskManager> extends InMemoryTaskManager {
     }
 
 
-     @Test
-       public void printAllTaskWithNull() {
-           ByteArrayOutputStream outContent1 = new ByteArrayOutputStream();
-           System.setOut(new PrintStream(outContent1));
-           deleteAllSubtask();
-           deleteAllTasks();
-           deleteAllEpics();
-           printAllTask();
-           String expectedOutput1  = "id,type,name,status,description,epic\r\n";
-           assertEquals(expectedOutput1, outContent1.toString());}
+    @Test
+    public void printAllTaskWithNull() {
+        ByteArrayOutputStream outContent1 = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent1));
+        deleteAllSubtask();
+        deleteAllTasks();
+        deleteAllEpics();
+        printAllTask();
+        String expectedOutput1 = "id,type,name,status,description,epic\r\n";
+        assertEquals(expectedOutput1, outContent1.toString());
+    }
 
-  @Test
+    @Test
     public void printAllTaskStandart() {
 
         Task task6 = new Task()
@@ -471,7 +472,7 @@ class TaskManagerTest <T extends TaskManager> extends InMemoryTaskManager {
 
     @Test
     public void removeSubtaskByWrongIdWhenHashMapSubtasksEmpty() {
-       Integer expected = subtaskRepository.getSubtasks().size();
+        Integer expected = subtaskRepository.getSubtasks().size();
         removeSubtaskById(2);
         assertEquals(subtaskRepository.getSubtasks().size(), expected);
     }
@@ -562,8 +563,9 @@ class TaskManagerTest <T extends TaskManager> extends InMemoryTaskManager {
 
 
     }
+
     @Test
-   public void changeStatusEpicWithEmptySubtask() {
+    public void changeStatusEpicWithEmptySubtask() {
         Epic testEpic = new Epic();
         testEpic.setId(1);
         testEpic.setName("Сварить пельмени");
@@ -602,7 +604,8 @@ class TaskManagerTest <T extends TaskManager> extends InMemoryTaskManager {
 
         changeStatusEpic(1);
         Status expected = Status.IN_PROGRESS;
-        assertEquals(epicRepository.getEpics().get(1).getStatus(), expected);}
+        assertEquals(epicRepository.getEpics().get(1).getStatus(), expected);
+    }
 
     @Test
     public void changeStatusEpicWrongId() {
@@ -627,11 +630,12 @@ class TaskManagerTest <T extends TaskManager> extends InMemoryTaskManager {
 
         changeStatusEpic(2);
         Status expected = Status.IN_PROGRESS;
-        assertEquals(epicRepository.getEpics().get(1).getStatus(), expected);}
+        assertEquals(epicRepository.getEpics().get(1).getStatus(), expected);
+    }
 
 
     @Test
-    public void getAllTasks2Standart(){
+    public void getAllTasks2Standart() {
         deleteAllTasks();
         Task task6 = new Task()
                 .setId(1)
@@ -662,19 +666,22 @@ class TaskManagerTest <T extends TaskManager> extends InMemoryTaskManager {
 
 
         ArrayList<Task> expected = new ArrayList<>();
-        expected.add(task6); expected.add(testEpic); expected.add(subtask9);
-        assertEquals(allTasks,expected);
+        expected.add(task6);
+        expected.add(testEpic);
+        expected.add(subtask9);
+        assertEquals(allTasks, expected);
     }
+
     @Test
-    public void getAllTasks2EmptyArrayTask(){
+    public void getAllTasks2EmptyArrayTask() {
         deleteAllTasks();
         ArrayList<Task> expected = new ArrayList<>();
-        assertEquals(allTasks,expected);
+        assertEquals(allTasks, expected);
 
     }
 
     @Test
-   public void getAllEpicsStandart(){
+    public void getAllEpicsStandart() {
         Epic testEpic = new Epic();
         testEpic.setId(1);
         testEpic.setName("Сварить пельмени");
@@ -693,20 +700,22 @@ class TaskManagerTest <T extends TaskManager> extends InMemoryTaskManager {
 
 
         ArrayList<Task> expected = new ArrayList<>();
-        expected.add(testEpic); expected.add(testEpic1);
-        assertEquals(getAllEpics(),expected);
+        expected.add(testEpic);
+        expected.add(testEpic1);
+        assertEquals(getAllEpics(), expected);
 
     }
 
     @Test
-    public void getAllEpicsEmptyHash(){
-    deleteAllEpics();
+    public void getAllEpicsEmptyHash() {
+        deleteAllEpics();
         ArrayList<Task> expected = new ArrayList<>();
-        assertEquals(getAllEpics(),expected);
+        assertEquals(getAllEpics(), expected);
 
     }
+
     @Test
-    public void getTaskByIdStandart(){
+    public void getTaskByIdStandart() {
         Task task6 = new Task()
                 .setId(1)
                 .setName("Отвести ребенка в садик")
@@ -717,17 +726,17 @@ class TaskManagerTest <T extends TaskManager> extends InMemoryTaskManager {
 
 
         Task expected = task6;
-        assertEquals(getTaskById(1),expected);
+        assertEquals(getTaskById(1), expected);
     }
 
     @Test
-    public void getTaskByIdEmptyAndWrongId(){
-        assertEquals(getTaskById(1),null);
+    public void getTaskByIdEmptyAndWrongId() {
+        assertEquals(getTaskById(1), null);
 
     }
 
     @Test
-    public void getTaskByIdWrongId(){
+    public void getTaskByIdWrongId() {
         Task task6 = new Task()
                 .setId(1)
                 .setName("Отвести ребенка в садик")
@@ -735,12 +744,12 @@ class TaskManagerTest <T extends TaskManager> extends InMemoryTaskManager {
                 .setStatus(models.Status.IN_PROGRESS);
         InMemoryTaskManager.tasksRepository.save(task6);
         InMemoryTaskManager.allTasks.add(task6);
-        assertEquals(getTaskById(2),null);
+        assertEquals(getTaskById(2), null);
 
     }
 
     @Test
-    public void getEpicByIdStandart(){
+    public void getEpicByIdStandart() {
         Epic testEpic = new Epic();
         testEpic.setId(1);
         testEpic.setName("Сварить пельмени");
@@ -750,16 +759,16 @@ class TaskManagerTest <T extends TaskManager> extends InMemoryTaskManager {
         InMemoryTaskManager.allTasks.add(testEpic);
         Epic expected = testEpic;
         assertEquals(getEpicById(1), expected);
-            }
+    }
 
     @Test
-    public void getEpicByIdEmptyHash(){
+    public void getEpicByIdEmptyHash() {
         deleteAllEpics();
         assertEquals(getEpicById(1), null);
     }
 
     @Test
-    public void getEpicByWrongId(){
+    public void getEpicByWrongId() {
         Epic testEpic = new Epic();
         testEpic.setId(1);
         testEpic.setName("Сварить пельмени");
@@ -769,6 +778,7 @@ class TaskManagerTest <T extends TaskManager> extends InMemoryTaskManager {
         InMemoryTaskManager.allTasks.add(testEpic);
         assertEquals(getEpicById(2), null);
     }
+
     @Test
     public void getSubtaskByIdStandart() {
         Epic testEpic = new Epic();
@@ -796,13 +806,13 @@ class TaskManagerTest <T extends TaskManager> extends InMemoryTaskManager {
     }
 
     @Test
-    public void getSubtaskByIdEmptyHash(){
+    public void getSubtaskByIdEmptyHash() {
         deleteAllSubtask();
         assertEquals(getSubtaskById(3), null);
     }
 
     @Test
-    public void getSubtaskByWrongId(){
+    public void getSubtaskByWrongId() {
         Epic testEpic = new Epic();
         testEpic.setId(1);
         testEpic.setName("Сварить пельмени");
@@ -827,7 +837,7 @@ class TaskManagerTest <T extends TaskManager> extends InMemoryTaskManager {
     }
 
     @Test
-    public void getListSubtaskStandart(){
+    public void getListSubtaskStandart() {
 
         Epic testEpic = new Epic();
         testEpic.setId(1);
@@ -859,20 +869,22 @@ class TaskManagerTest <T extends TaskManager> extends InMemoryTaskManager {
         InMemoryTaskManager.allTasks.add(subtask10);
 
         ArrayList<Subtask> expected = new ArrayList<>();
-        expected.add(subtask9); expected.add(subtask10);
+        expected.add(subtask9);
+        expected.add(subtask10);
 
         assertEquals(getListSubtask(1), expected);
 
     }
+
     @Test
-    public void getListSubtaskEmptyHash(){
+    public void getListSubtaskEmptyHash() {
         deleteAllSubtask();
         ArrayList<Subtask> expected = new ArrayList<>();
         assertEquals(getListSubtask(1), expected);
     }
 
     @Test
-    public void getListSubtaskWrongEpicId(){
+    public void getListSubtaskWrongEpicId() {
         Epic testEpic = new Epic();
         testEpic.setId(1);
         testEpic.setName("Сварить пельмени");
@@ -910,9 +922,8 @@ class TaskManagerTest <T extends TaskManager> extends InMemoryTaskManager {
     }
 
     @Test
-    public void getHistoryStandart(){
+    public void getHistoryStandart() {
         List<Task> expected = new ArrayList<>();
-
 
 
     }

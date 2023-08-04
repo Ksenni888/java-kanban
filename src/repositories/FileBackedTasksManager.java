@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.TreeSet;
 
+import static models.Enum.*;
 import static services.InMemoryHistoryManager.historyHash;
 
 
@@ -41,19 +42,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
             for (Task task2 : inMemoryTaskManager.getAllTasks2()) {
 
-                System.out.println(task2.getId() + "," + Enum.TASK + "," + task2.getName() + "," + task2.getStatus() + "," + task2.getDescription() + "," + task2.getId() + "," + task2.getStartTime() + "," + task2.getDuration() + "," + task2.getEndTime());
-                fileWriter.write(task2.getId() + "," + Enum.TASK + "," + task2.getName() + "," + task2.getStatus() + "," + task2.getDescription() + "," + task2.getId() + "," + task2.getStartTime() + "," + task2.getDuration() + "," + task2.getEndTime() + "\n");
+                System.out.println(task2.getId() + "," +TASK + "," + task2.getName() + "," + task2.getStatus() + "," + task2.getDescription() + "," + task2.getId() + "," + task2.getStartTime() + "," + task2.getDuration() + "," + task2.getEndTime());
+                fileWriter.write(task2.getId() + "," + TASK + "," + task2.getName() + "," + task2.getStatus() + "," + task2.getDescription() + "," + task2.getId() + "," + task2.getStartTime() + "," + task2.getDuration() + "," + task2.getEndTime() + "\n");
             }
 
             for (Epic epic3 : inMemoryTaskManager.getAllEpics()) {
-                System.out.println(epic3.getId() + "," + Enum.EPIC + "," + epic3.getName() + "," + epic3.getStatus() + "," + epic3.getDescription() + "," + epic3.getId() + "," + epic3.getStartTimeEpic(epic3.getId()) + "," + epic3.getDurationEpic(epic3.getId()) + "," + epic3.getEndTimeEpic(epic3.getId()));
-                fileWriter.write(epic3.getId() + "," + Enum.EPIC + "," + epic3.getName() + "," + epic3.getStatus() + "," + epic3.getDescription() + "," + epic3.getId() + "," + epic3.getStartTimeEpic(epic3.getId()) + "," + epic3.getDurationEpic(epic3.getId()) + "," + epic3.getEndTimeEpic(epic3.getId()) + "\n");
+                System.out.println(epic3.getId() + "," + EPIC + "," + epic3.getName() + "," + epic3.getStatus() + "," + epic3.getDescription() + "," + epic3.getId() + "," + epic3.getStartTimeEpic(epic3.getId()) + "," + epic3.getDurationEpic(epic3.getId()) + "," + epic3.getEndTimeEpic(epic3.getId()));
+                fileWriter.write(epic3.getId() + "," + EPIC + "," + epic3.getName() + "," + epic3.getStatus() + "," + epic3.getDescription() + "," + epic3.getId() + "," + epic3.getStartTimeEpic(epic3.getId()) + "," + epic3.getDurationEpic(epic3.getId()) + "," + epic3.getEndTimeEpic(epic3.getId()) + "\n");
 
             }
 
             for (Subtask subtask2 : inMemoryTaskManager.getAllSubtasks()) {
-                System.out.println(subtask2.getId() + "," + Enum.SUBTASK + "," + subtask2.getName() + "," + subtask2.getStatus() + "," + subtask2.getDescription() + "," + subtask2.getEpicID() + "," + subtask2.getStartTime() + "," + subtask2.getDuration() + "," + subtask2.getEndTime());
-                fileWriter.write(subtask2.getId() + "," + Enum.SUBTASK + "," + subtask2.getName() + "," + subtask2.getStatus() + "," + subtask2.getDescription() + "," + subtask2.getEpicID() + "," + subtask2.getStartTime() + "," + subtask2.getDuration() + "," + subtask2.getEndTime() + "\n");
+                System.out.println(subtask2.getId() + "," + SUBTASK + "," + subtask2.getName() + "," + subtask2.getStatus() + "," + subtask2.getDescription() + "," + subtask2.getEpicID() + "," + subtask2.getStartTime() + "," + subtask2.getDuration() + "," + subtask2.getEndTime());
+                fileWriter.write(subtask2.getId() + "," + SUBTASK + "," + subtask2.getName() + "," + subtask2.getStatus() + "," + subtask2.getDescription() + "," + subtask2.getEpicID() + "," + subtask2.getStartTime() + "," + subtask2.getDuration() + "," + subtask2.getEndTime() + "\n");
 
             }
             fileWriter.write("\n");
@@ -86,9 +87,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     String description = parts[4];
                     int epic = Integer.parseInt(parts[5]);
                     DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-                    LocalDateTime startTime = LocalDateTime.parse(parts[6].toString(), format);
-                    Integer duration = Integer.parseInt(parts[7]);
-                    LocalDateTime endTime = LocalDateTime.parse(parts[8].toString(), format);
+                    LocalDateTime startTime = LocalDateTime.parse(parts[6], format);
+                    int duration = Integer.parseInt(parts[7]);
+                    LocalDateTime endTime = LocalDateTime.parse(parts[8], format);
 
                     if (type.equals("TASK")) {
                         Task task = new Task();
@@ -159,7 +160,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public void validator() {
         System.out.println("*******************************" + "\n" + "Задачи, у которых нужно поменять StartTime:" + "\n");
-        TreeSet<Task> sortTasksTime = new TreeSet<>(new Comparator<Task>() {
+        TreeSet<Task> sortTasksTime = new TreeSet<>(new Comparator<>() {
 
             @Override
             public int compare(Task o1, Task o2) {
@@ -180,13 +181,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
 
         });
-        for (Task t : inMemoryTaskManager.getAllTasks2()) {
-            sortTasksTime.add(t);
-        }
-
-        for (Subtask s : inMemoryTaskManager.getAllSubtasks()) {
-            sortTasksTime.add(s);
-        }
+        sortTasksTime.addAll(inMemoryTaskManager.getAllTasks2());
+        sortTasksTime.addAll(inMemoryTaskManager.getAllSubtasks());
     }
 
     public TreeSet<Task> getPrioritizedTasks() {
@@ -208,13 +204,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         });
 
 
-        for (Task t : inMemoryTaskManager.getAllTasks2()) {
-            sortTasksTime.add(t);
-        }
+        sortTasksTime.addAll(inMemoryTaskManager.getAllTasks2());
+        sortTasksTime.addAll(inMemoryTaskManager.getAllSubtasks());
 
-        for (Subtask s : inMemoryTaskManager.getAllSubtasks()) {
-            sortTasksTime.add(s);
-        }
         System.out.println("*******************************" + "\n" + "Сортировка задач по времени начала:" + "\n");
         for (Task ts : sortTasksTime) {
 
@@ -305,9 +297,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
 
         System.out.println("Вывод эпика по заданному id: " + manager.getEpicById(2));
-        System.out.println("Вывод задачи по заданному id: " + manager.getTaskById(1));
+        System.out.println("Вывод задачи по заданному id: " + manager.getTaskById(9));
         System.out.println("Вывод подзадачи по заданному id: " + manager.getSubtaskById(3));
-        System.out.println("Вывод подзадачи по заданному id: " + manager.getSubtaskById(3));
+        System.out.println("Вывод подзадачи по заданному id: " + manager.getSubtaskById(6));
         //   inMemoryTaskManager.deleteAllTask();
         //   inMemoryTaskManager.deleteAllEpics();
         //   inMemoryTaskManager.deleteAllSubtask();

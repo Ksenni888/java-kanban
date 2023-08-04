@@ -22,10 +22,9 @@ import static services.InMemoryHistoryManager.historyHash;
 
 class FileBackedTasksManagerTest extends InMemoryTaskManager {
     private models.Enum Enum;
+    private final File file = new File("file.csv");
+    private final FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file);
 
-    File file = new File("file.csv");
-    FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file);
-InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
 @Test
 public void NoTasks() {
     deleteAllEpics();
