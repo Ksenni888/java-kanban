@@ -14,7 +14,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     static public HashMap<Integer, Node<Task>> historyHash = new HashMap<>();
 
-    public class Node<E> {
+    public class Node<E> { //изменила на public
 
         public E getData() { //создала геттер
             return data;

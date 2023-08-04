@@ -53,6 +53,7 @@ public interface TaskManager {
 
     ArrayList<Subtask> getListSubtask(int id); //получить список подзадач эпика по id
 
+    //  List<Task> getHistory(int id, Task task);
 }
 
 
