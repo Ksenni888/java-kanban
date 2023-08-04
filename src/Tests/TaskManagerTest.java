@@ -7,6 +7,7 @@ import models.Task;
 import org.junit.jupiter.api.*;
 import services.InMemoryTaskManager;
 import services.TaskManager;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -912,13 +913,6 @@ class TaskManagerTest<T extends TaskManager> extends InMemoryTaskManager {
 
 
         assertEquals(getListSubtask(2), expected);
-
-    }
-
-    @Test
-    public void getHistoryStandart() {
-        List<Task> expected = new ArrayList<>();
-
 
     }
 
