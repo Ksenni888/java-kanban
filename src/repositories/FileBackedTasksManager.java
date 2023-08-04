@@ -42,7 +42,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
             for (Task task2 : inMemoryTaskManager.getAllTasks2()) {
 
-                System.out.println(task2.getId() + "," +TASK + "," + task2.getName() + "," + task2.getStatus() + "," + task2.getDescription() + "," + task2.getId() + "," + task2.getStartTime() + "," + task2.getDuration() + "," + task2.getEndTime());
+                System.out.println(task2.getId() + "," + TASK + "," + task2.getName() + "," + task2.getStatus() + "," + task2.getDescription() + "," + task2.getId() + "," + task2.getStartTime() + "," + task2.getDuration() + "," + task2.getEndTime());
                 fileWriter.write(task2.getId() + "," + TASK + "," + task2.getName() + "," + task2.getStatus() + "," + task2.getDescription() + "," + task2.getId() + "," + task2.getStartTime() + "," + task2.getDuration() + "," + task2.getEndTime() + "\n");
             }
 
@@ -188,19 +188,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public TreeSet<Task> getPrioritizedTasks() {
 
 
-        TreeSet<Task> sortTasksTime = new TreeSet<>(new Comparator<Task>() {
-
-            @Override
-            public int compare(Task o1, Task o2) {
-                if ((o1.getStartTime().isBefore(o2.getStartTime()))) {
-                    return -1;
-                } else if ((o1.getStartTime().isAfter(o2.getStartTime()))) {
-                    return 1;
-                } else {
-                    return 1;
-                }
+        TreeSet<Task> sortTasksTime = new TreeSet<>((o1, o2) -> {
+            if ((o1.getStartTime().isBefore(o2.getStartTime()))) {
+                return -1;
+            } else if ((o1.getStartTime().isAfter(o2.getStartTime()))) {
+                return 1;
+            } else {
+                return 1;
             }
-
         });
 
 

@@ -1,22 +1,17 @@
 package Tests;
 
-import models.Enum;
 import models.Epic;
 import models.Subtask;
 import models.Task;
 import org.junit.jupiter.api.Test;
 import repositories.FileBackedTasksManager;
-import services.InMemoryHistoryManager;
 import services.InMemoryTaskManager;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static repositories.FileBackedTasksManager.loadFromFile;
 import static services.InMemoryHistoryManager.historyHash;
 
@@ -25,19 +20,19 @@ class FileBackedTasksManagerTest extends InMemoryTaskManager {
     private final File file = new File("file.csv");
     private final FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file);
 
-@Test
-public void NoTasks() {
-    deleteAllEpics();
-    deleteAllTask();
-    fileBackedTasksManager.save();
-    loadFromFile(file);
-    ArrayList<Task> expectedTask = new ArrayList<>();
-    ArrayList<Subtask> expectedSubtask = new ArrayList<>();
-    ArrayList<Subtask> expectedEpics = new ArrayList<>();
-    assertEquals(tasksRepository.getAll(),expectedTask);
-    assertEquals(subtaskRepository.getAll(),expectedSubtask);
-    assertEquals(epicRepository.getAll(),expectedEpics);
-}
+    @Test
+    public void NoTasks() {
+        deleteAllEpics();
+        deleteAllTask();
+        fileBackedTasksManager.save();
+        loadFromFile(file);
+        ArrayList<Task> expectedTask = new ArrayList<>();
+        ArrayList<Subtask> expectedSubtask = new ArrayList<>();
+        ArrayList<Epic> expectedEpics = new ArrayList<>();
+        assertEquals(tasksRepository.getAll(), expectedTask);
+        assertEquals(subtaskRepository.getAll(), expectedSubtask);
+        assertEquals(epicRepository.getAll(), expectedEpics);
+    }
 
     @Test
     public void NoHistory() {
@@ -75,7 +70,7 @@ public void NoTasks() {
         InMemoryTaskManager.subtaskRepository.save(subtask9);
         InMemoryTaskManager.allTasks.add(subtask9);
 
-      //  getInMemoryHistoryManager().getHistoryHash().clear();
+        //  getInMemoryHistoryManager().getHistoryHash().clear();
         fileBackedTasksManager.save();
         loadFromFile(file);
         ArrayList<Task> expectedTask = new ArrayList<>();
@@ -84,12 +79,13 @@ public void NoTasks() {
         expectedSubtask.add(subtask9);
         ArrayList<Epic> expectedEpics = new ArrayList<>();
         expectedEpics.add(epic6);
-        assertEquals(tasksRepository.getAll().toString(),expectedTask.toString());
-        assertEquals(subtaskRepository.getAll().toString(),expectedSubtask.toString());
-        assertEquals(epicRepository.getAll().toString(),expectedEpics.toString());
+        assertEquals(tasksRepository.getAll().toString(), expectedTask.toString());
+        assertEquals(subtaskRepository.getAll().toString(), expectedSubtask.toString());
+        assertEquals(epicRepository.getAll().toString(), expectedEpics.toString());
         deleteAllEpics();
         deleteAllTask();
     }
+
     @Test
     public void EpicWhithoutSubtasks() {
         deleteAllEpics();
@@ -100,7 +96,7 @@ public void NoTasks() {
                 .setDescription("Отвести ребенка в садик")
                 .setStatus(models.Status.IN_PROGRESS);
         task6.setDuration(2);
-       // task6.setStartTime(LocalDateTime.of(2020, 1, 1, 8, 0, 0, 0));
+        // task6.setStartTime(LocalDateTime.of(2020, 1, 1, 8, 0, 0, 0));
         task6.setStartTime(null);
         InMemoryTaskManager.tasksRepository.save(task6);
         InMemoryTaskManager.allTasks.add(task6);
@@ -113,19 +109,18 @@ public void NoTasks() {
         InMemoryTaskManager.epicRepository.save(epic6);
         InMemoryTaskManager.allTasks.add(epic6);
 
-        System.out.println("Вывод эпика по заданному id: " +getEpicById(2));
+        System.out.println("Вывод эпика по заданному id: " + getEpicById(2));
         fileBackedTasksManager.save();
         loadFromFile(file);
         ArrayList<Task> expectedTask = new ArrayList<>();
         expectedTask.add(task6);
         ArrayList<Epic> expectedEpics = new ArrayList<>();
         expectedEpics.add(epic6);
-        assertEquals(tasksRepository.getAll().toString(),expectedTask.toString());
-        assertEquals(epicRepository.getAll().toString(),expectedEpics.toString());
+        assertEquals(tasksRepository.getAll().toString(), expectedTask.toString());
+        assertEquals(epicRepository.getAll().toString(), expectedEpics.toString());
         deleteAllEpics();
         deleteAllTask();
     }
-
 
 
 }

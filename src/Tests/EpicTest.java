@@ -13,7 +13,7 @@ import services.InMemoryTaskManager;
 class EpicTest extends InMemoryTaskManager {
 
     @Test
-    public void getStatusEpicIfNoneSubtasks(){ //эпик с пустым списком подзадач
+    public void getStatusEpicIfNoneSubtasks() { //эпик с пустым списком подзадач
         String expectedEpicStatus = "IN_PROGRESS";
         Epic testEpic = new Epic();
         testEpic.setId(1);
@@ -23,8 +23,9 @@ class EpicTest extends InMemoryTaskManager {
         epicRepository.save(testEpic);
         Assertions.assertEquals(((epicRepository.getEpics()).get(1).getStatus()).toString(), expectedEpicStatus);
     }
+
     @Test
-    public void getStatusEpicIfAllSubtasksNew(){
+    public void getStatusEpicIfAllSubtasksNew() {
         Status expectedEpicStatus = Status.NEW;
         Epic testEpic = new Epic();
         testEpic.setId(1);
@@ -59,7 +60,7 @@ class EpicTest extends InMemoryTaskManager {
     }
 
     @Test
-    public void getStatusEpicIfAllSubtasksDONE(){
+    public void getStatusEpicIfAllSubtasksDONE() {
         Status expectedEpicStatus = Status.DONE;
         Epic testEpic = new Epic();
         testEpic.setId(1);
@@ -92,8 +93,9 @@ class EpicTest extends InMemoryTaskManager {
         inMemoryTaskManager.changeStatusEpic(1);
         Assertions.assertEquals(epicRepository.getEpics().get(1).getStatus(), expectedEpicStatus);
     }
+
     @Test
-    public void getStatusEpicIfAllSubtasksNewAndDone(){
+    public void getStatusEpicIfAllSubtasksNewAndDone() {
         Status expectedEpicStatus = Status.IN_PROGRESS;
         Epic testEpic = new Epic();
         testEpic.setId(1);
@@ -126,8 +128,9 @@ class EpicTest extends InMemoryTaskManager {
         inMemoryTaskManager.changeStatusEpic(1);
         Assertions.assertEquals(epicRepository.getEpics().get(1).getStatus(), expectedEpicStatus);
     }
+
     @Test
-    public void getStatusEpicIfAllSubtasksInProgress(){
+    public void getStatusEpicIfAllSubtasksInProgress() {
         Status expectedEpicStatus = Status.IN_PROGRESS;
         Epic testEpic = new Epic();
         testEpic.setId(1);

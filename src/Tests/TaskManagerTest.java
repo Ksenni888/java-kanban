@@ -1,18 +1,12 @@
 package Tests;
 
-import models.Enum;
 import models.Epic;
 import models.Status;
 import models.Subtask;
 import models.Task;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.*;
-import services.HistoryManager;
-import services.InMemoryHistoryManager;
 import services.InMemoryTaskManager;
 import services.TaskManager;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -23,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 class TaskManagerTest<T extends TaskManager> extends InMemoryTaskManager {
-    private InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
+    private final InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
 
     @Test
     public void printListSubtaskIdEpicStandart() {
@@ -725,8 +719,8 @@ class TaskManagerTest<T extends TaskManager> extends InMemoryTaskManager {
         InMemoryTaskManager.allTasks.add(task6);
 
 
-        Task expected = task6;
-        assertEquals(getTaskById(1), expected);
+        Task expected1 = task6;
+        assertEquals(getTaskById(1), expected1);
     }
 
     @Test

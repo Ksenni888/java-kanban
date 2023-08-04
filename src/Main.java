@@ -1,29 +1,20 @@
-import models.Status;
-import models.Task;
 import repositories.FileBackedTasksManager;
 import repositories.Managers;
-import services.InMemoryHistoryManager;
-import services.InMemoryTaskManager;
-
 import java.io.File;
-import java.io.IOException;
-
-
-
 
 public class Main {
     public static void main(String[] args) {
         //!!!!!!Сейчас тут только происходит загрузка данных из файла через fileBackedTasksManager!!!!!
-       FileBackedTasksManager fileBackedTasksManager = (FileBackedTasksManager) Managers.getDefault();
-      File file = new File("file.csv");
-      fileBackedTasksManager.loadFromFile(file);
+        FileBackedTasksManager fileBackedTasksManager = (FileBackedTasksManager) Managers.getDefault();
+        File file = new File("file.csv");
+        fileBackedTasksManager.loadFromFile(file);
 
-      //  fileBackedTasksManager.changeStatusTask(10, Status.NEW);
-       // fileBackedTasksManager.changeStatusTask(3, Status.DONE);
-    //    fileBackedTasksManager.changeStatusSubtask(3, Status.DONE);
-  //  System.out.println(fileBackedTasksManager.getAllTasks2());
-    //    System.out.println(fileBackedTasksManager.getAllSubtasks());
-    //    System.out.println(fileBackedTasksManager.getAllEpics());
+        //  fileBackedTasksManager.changeStatusTask(10, Status.NEW);
+        // fileBackedTasksManager.changeStatusTask(3, Status.DONE);
+        //    fileBackedTasksManager.changeStatusSubtask(3, Status.DONE);
+        //  System.out.println(fileBackedTasksManager.getAllTasks2());
+        //    System.out.println(fileBackedTasksManager.getAllSubtasks());
+        //    System.out.println(fileBackedTasksManager.getAllEpics());
        /*Код ниже может пригодиться:
        InMemoryTaskManager manager = (InMemoryTaskManager) Managers.getDefault();
        InMemoryHistoryManager historyManager = (InMemoryHistoryManager) Managers.getDefaultHistory();
@@ -51,7 +42,7 @@ public class Main {
         //  System.out.println("Вывод подзадачи по заданному" + manager.getSubtaskById()); //эпик 11
         //  manager.removeEpicById(11);
    */
-       fileBackedTasksManager.getPrioritizedTasks();
-       fileBackedTasksManager.validator();
+        fileBackedTasksManager.getPrioritizedTasks();
+        fileBackedTasksManager.validator();
     }
 }
