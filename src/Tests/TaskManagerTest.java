@@ -576,7 +576,7 @@ class TaskManagerTest<T extends TaskManager> extends InMemoryTaskManager {
         deleteAllSubtask();
 
         changeStatusEpic(1);
-        Status expected = Status.DONE;
+        Status expected = Status.NEW;
         assertEquals(epicRepository.getEpics().get(1).getStatus(), expected);
 
     }

@@ -8,14 +8,22 @@ import models.Task;
 import repositories.*;
 import models.Enum;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class InMemoryTaskManager implements TaskManager {
-    protected static TaskRepository tasksRepository = new TaskRepository();
+    public static TaskRepository tasksRepository = new TaskRepository();
     protected static EpicRepository epicRepository = new EpicRepository();
     protected static SubtaskRepository subtaskRepository = new SubtaskRepository();
     protected static ArrayList<Task> allTasks = new ArrayList<>();
+ //  private final HistoryManager historyManager = new InMemoryHistoryManager();
+
+  /*  public InMemoryTaskManager(HistoryManager historyManager) {
+        this.historyManager = historyManager;
+    }*/
+
 
     public static int getCOUNT() {
         return COUNT++;
@@ -24,6 +32,7 @@ public class InMemoryTaskManager implements TaskManager {
     private static int COUNT = 0;
 
     private HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
+
 
     @Override
     public void printListSubtaskIdEpic(int id) { //печатаем подзадачи эпика по нужному id
@@ -174,10 +183,28 @@ public class InMemoryTaskManager implements TaskManager {
                 (epicRepository.get(id)).setStatus(Status.IN_PROGRESS);
             }
         }
+        else
+        { if (epicRepository.get(id)!=null) {epicRepository.get(id).setStatus(Status.NEW);}}
+
     }
 
 
-    public static ArrayList<Task> getAllTasks() {
+ public ArrayList<Task> getAllTasks() {
+     allTasks.addAll(tasksRepository.getAll());
+     allTasks.addAll(subtaskRepository.getAll());
+     allTasks.addAll(epicRepository.getAll());
+
+
+
+   /*  Task task = new Task()
+             .setId(COUNT++)
+             .setName("Позвонить подруге")
+             .setDescription("Description")
+             .setStatus(models.Status.IN_PROGRESS);
+     tasksRepository.save(task);
+     allTasks.add(task);
+
+
         //заполнение списка всех задач отключила, т.к. загружаются из файла
     /*    Task task = new Task()
                 .setId(COUNT++)
@@ -367,7 +394,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task getEpicById(int id) { //получить эпик по id
+    public Epic getEpicById(int id) { //получить эпик по id
         inMemoryHistoryManager.add(epicRepository.get(id));
         //  inMemoryHistoryManager.getHistory(id, epicRepository.get(id));
         return epicRepository.get(id);
@@ -386,11 +413,18 @@ public class InMemoryTaskManager implements TaskManager {
         return subtaskRepository.getListSubtask(id);
     } //получить список подзадач эпика по id
 
+  @Override
+   public List<Task> getHistory() {
+     return inMemoryHistoryManager.getHis2();
+    }
+
     public HistoryManager getInMemoryHistoryManager() {
         return inMemoryHistoryManager;
     }
-}
 
+
+
+}
 
 
 

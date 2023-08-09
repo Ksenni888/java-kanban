@@ -2,14 +2,17 @@ package repositories;
 
 import models.*;
 import models.Enum;
+import services.HistoryManager;
 import services.InMemoryHistoryManager;
 import services.InMemoryTaskManager;
+import services.TaskManager;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.TreeSet;
 
@@ -18,16 +21,22 @@ import static services.InMemoryHistoryManager.historyHash;
 
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private final File file;
-    private Enum Enum;
+   private final File file;
 
+    private Enum Enum;
+  // protected static InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
+  //  protected static InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
+  public FileBackedTasksManager() {
+      this.file = null;
+  }
     public FileBackedTasksManager(File file) {
         this.file = file;
     }
-
-    protected static InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
-    protected static InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
-
+public static FileBackedTasksManager loadFromFile (File file){
+        FileBackedTasksManager tasksManager = new FileBackedTasksManager(file);
+        tasksManager.load();
+        return tasksManager;
+}
     public static class ManagerSaveException extends RuntimeException {
         public ManagerSaveException(final String message) {
             super(message);
@@ -40,19 +49,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             System.out.println("id,type,name,status,description,epic,startTime,duration,endTime");
             fileWriter.write("id,type,name,status,description,epic,startTime,duration,endTime\n");
 
-            for (Task task2 : inMemoryTaskManager.getAllTasks2()) {
+            for (Task task2 : getAllTasks2()) {
 
                 System.out.println(task2.getId() + "," +TASK + "," + task2.getName() + "," + task2.getStatus() + "," + task2.getDescription() + "," + task2.getId() + "," + task2.getStartTime() + "," + task2.getDuration() + "," + task2.getEndTime());
                 fileWriter.write(task2.getId() + "," + TASK + "," + task2.getName() + "," + task2.getStatus() + "," + task2.getDescription() + "," + task2.getId() + "," + task2.getStartTime() + "," + task2.getDuration() + "," + task2.getEndTime() + "\n");
             }
 
-            for (Epic epic3 : inMemoryTaskManager.getAllEpics()) {
+            for (Epic epic3 : getAllEpics()) {
                 System.out.println(epic3.getId() + "," + EPIC + "," + epic3.getName() + "," + epic3.getStatus() + "," + epic3.getDescription() + "," + epic3.getId() + "," + epic3.getStartTimeEpic(epic3.getId()) + "," + epic3.getDurationEpic(epic3.getId()) + "," + epic3.getEndTimeEpic(epic3.getId()));
                 fileWriter.write(epic3.getId() + "," + EPIC + "," + epic3.getName() + "," + epic3.getStatus() + "," + epic3.getDescription() + "," + epic3.getId() + "," + epic3.getStartTimeEpic(epic3.getId()) + "," + epic3.getDurationEpic(epic3.getId()) + "," + epic3.getEndTimeEpic(epic3.getId()) + "\n");
 
             }
 
-            for (Subtask subtask2 : inMemoryTaskManager.getAllSubtasks()) {
+            for (Subtask subtask2 : getAllSubtasks()) {
                 System.out.println(subtask2.getId() + "," + SUBTASK + "," + subtask2.getName() + "," + subtask2.getStatus() + "," + subtask2.getDescription() + "," + subtask2.getEpicID() + "," + subtask2.getStartTime() + "," + subtask2.getDuration() + "," + subtask2.getEndTime());
                 fileWriter.write(subtask2.getId() + "," + SUBTASK + "," + subtask2.getName() + "," + subtask2.getStatus() + "," + subtask2.getDescription() + "," + subtask2.getEpicID() + "," + subtask2.getStartTime() + "," + subtask2.getDuration() + "," + subtask2.getEndTime() + "\n");
 
@@ -71,7 +80,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
 
-    public static void loadFromFile(File file) {
+    public void load() {
         try { //id,type,name,status,description,epic,startTime,duration,endTime
 
             String content = Files.readString(Paths.get(file.getPath()));
@@ -91,7 +100,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     int duration = Integer.parseInt(parts[7]);
                     LocalDateTime endTime = LocalDateTime.parse(parts[8], format);
 
-                    if (type.equals("TASK")) {
+                    if (type.equals("TASK")) {//int id, String name, String description, int duration, LocalDateTime startTime, LocalDateTime endTime, Status status
                         Task task = new Task();
                         task.setId(id);
                         task.setName(name);
@@ -136,16 +145,18 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     for (String s : str1) {
                         int l = Integer.parseInt(s);
                         if (tasksRepository.getTasks().containsKey(l) && (!tasksRepository.getTasks().isEmpty())) {
-                            historyHash.put(l, inMemoryHistoryManager.linkLast(tasksRepository.getTasks().get(l)));
+                            //historyHash.put(l, inMemoryHistoryManager.linkLast(tasksRepository.getTasks().get(l)));
+                           getTaskById(l);
+
 
                         }
                         if (subtaskRepository.getSubtasks().containsKey(l) && (!subtaskRepository.getSubtasks().isEmpty())) {
-                            historyHash.put(l, inMemoryHistoryManager.linkLast(subtaskRepository.getSubtasks().get(l)));
-
+                          //  historyHash.put(l, inMemoryHistoryManager.linkLast(subtaskRepository.getSubtasks().get(l)));
+                            getSubtaskById(l);
                         }
                         if (epicRepository.getEpics().containsKey(l) && (!epicRepository.getEpics().isEmpty())) {
-                            historyHash.put(l, inMemoryHistoryManager.linkLast(epicRepository.getEpics().get(l)));
-
+                         //   historyHash.put(l, inMemoryHistoryManager.linkLast(epicRepository.getEpics().get(l)));
+                            getEpicById(l);
                         }
                     }
                     System.out.println("Задачи из истории: " + historyHash.keySet() + historyHash.values());
@@ -181,8 +192,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
 
         });
-        sortTasksTime.addAll(inMemoryTaskManager.getAllTasks2());
-        sortTasksTime.addAll(inMemoryTaskManager.getAllSubtasks());
+        sortTasksTime.addAll(getAllTasks2());
+        sortTasksTime.addAll(getAllSubtasks());
     }
 
     public TreeSet<Task> getPrioritizedTasks() {
@@ -204,8 +215,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         });
 
 
-        sortTasksTime.addAll(inMemoryTaskManager.getAllTasks2());
-        sortTasksTime.addAll(inMemoryTaskManager.getAllSubtasks());
+        sortTasksTime.addAll(getAllTasks2());
+        sortTasksTime.addAll(getAllSubtasks());
 
         System.out.println("*******************************" + "\n" + "Сортировка задач по времени начала:" + "\n");
         for (Task ts : sortTasksTime) {
@@ -231,8 +242,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 .setStatus(models.Status.IN_PROGRESS);
         task6.setDuration(2);
         task6.setStartTime(LocalDateTime.of(2020, 1, 2, 12, 0, 0, 0));
-        InMemoryTaskManager.tasksRepository.save(task6);
-
+      //  InMemoryTaskManager.tasksRepository.save(task6);
+     fileBackedTasksManager.createTask(task6);
         InMemoryTaskManager.allTasks.add(task6);
 
         Task task7 = new Task()
@@ -293,7 +304,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         InMemoryTaskManager.allTasks.add(subtask10);
 
 
-        inMemoryTaskManager.changeStatusEpic(2);
+    //    changeStatusEpic(2);
 
 
         System.out.println("Вывод эпика по заданному id: " + manager.getEpicById(2));
@@ -305,12 +316,95 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         //   inMemoryTaskManager.deleteAllSubtask();
         fileBackedTasksManager.removeSubtaskById(0);
         fileBackedTasksManager.removeSubtaskById(0);
-        fileBackedTasksManager.save();
         fileBackedTasksManager.getPrioritizedTasks();
         fileBackedTasksManager.validator();
+        fileBackedTasksManager.save();
 
     }
 
+public void createTask(Task task) {
+        super.saveTask(task);
+        save();
+}
+
+public void createEpic(Epic epic) {
+        super.saveEpic(epic);
+        save();
+}
+
+    public void createSubtask(Subtask subtask) {
+        super.saveSubtask(subtask);
+        save();
+    }
+
+    public void deleteAllTasks() { //удаление вообще всех задач+эпиков+подзадач из общего списка
+        super.deleteAllTasks();
+        save();
+
+    } //удаление всех задач из общего списка
+    public void  deleteAllTask(){
+        super.deleteAllTask();
+        save();
+    }
+
+    public void deleteAllEpics(){
+        super.deleteAllEpics();
+        save();
+    }
+
+    public void deleteAllSubtask(){
+        super.deleteAllSubtask();
+        save();
+    }
+
+    public void removeTaskById(int id) {
+        super.removeTaskById(id);
+        save();
+    }
+
+    public void removeEpicById(int id) {
+        super.removeEpicById(id);
+        save();
+    }
+
+    public void removeSubtaskById(int id) {
+        super.removeSubtaskById(id);
+        save();
+    }
+
+    public void changeStatusEpic(int id){
+        super.changeStatusEpic(id);
+        save();
+
+    }
+
+    public void changeStatusTask(int id, models.Status status){
+        super.changeStatusTask(id,status);
+        save();
+    }
+    public void changeStatusSubtask(int id, models.Status status){
+        super.changeStatusSubtask(id,status);
+        save();
+    }
+    
+
+/*
+* ArrayList<Subtask> getAllSubtasks(); //получить список всех подзадач
+
+    ArrayList<Epic> getAllEpics(); //получить список всех эпиков
+
+    Task getTaskById(int id); //получить задачу по id
+
+    Task getEpicById(int id); //получить эпик по id
+
+    Task getSubtaskById(int id); //получить подзадачу id
+
+    ArrayList<Subtask> getListSubtask(int id); //получить список подзадач эпика по id
+
+     List<Task> getHistory();
+*
+*
+* */
 
 }
 

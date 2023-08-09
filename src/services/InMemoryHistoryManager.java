@@ -33,6 +33,10 @@ public class InMemoryHistoryManager implements HistoryManager {
             this.next = next;
             this.prev = prev;
         }
+/*@Override
+public String toString() {
+    return "id=[" + data.id + "]" + " name=[" + name + "] статус задачи=[" + status + "] StartTime=[" + startTime + "] продолжительность (мин.)=[" + duration + "] EndTime=[" + getEndTime() + "]";
+}*/
 
     }
 

@@ -31,7 +31,7 @@ public class EpicRepository {
         return EpicsFromHash;
     }
 
-    public Task get(int id) {
+    public Epic get(int id) {
         return epics.get(id);
     }  //получить id эпика
 }
