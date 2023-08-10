@@ -1,8 +1,6 @@
 package repositories;
 
 import models.Subtask;
-import models.Task;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -49,7 +47,7 @@ public class SubtaskRepository {
         return getListSubtasks;
     }
 
-    public Task get(int id) {
+    public Subtask get(int id) {
         return subtasks.get(id);
     } //вернуть подзадачу по id
 

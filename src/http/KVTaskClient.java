@@ -17,7 +17,6 @@ public class KVTaskClient {
         this.serverURL = serverURL;
     }
 
-    private HttpClient httpClient;
 
     public void register(String serverURL) throws IOException, InterruptedException { //чтобы не авторизоваться руками на кв сервере
         this.serverURL = serverURL;
@@ -31,8 +30,10 @@ public class KVTaskClient {
                 .build();
 
         HttpClient client = HttpClient.newHttpClient();
-        HttpResponse<String> response = client.send(request,HttpResponse.BodyHandlers.ofString()); //ответ
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString()); //ответ
         apiToken = response.body();
+
+        System.out.println(apiToken);
     }
 
     public void put(String key, String json) {
@@ -43,7 +44,6 @@ public class KVTaskClient {
                 .uri(uri)
                 .header("Content-Type", "application/json")
                 .build();
-
 
 
         HttpClient client = HttpClient.newHttpClient();

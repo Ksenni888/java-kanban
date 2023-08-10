@@ -1,41 +1,43 @@
 package repositories;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import http.HttpTaskManager;
-import http.KVServer;
-import services.HistoryManager;
-import services.InMemoryHistoryManager;
-import services.InMemoryTaskManager;
-import services.TaskManager;
-
+import services.*;
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 
 public class Managers {
 
-    public static TaskManager getInMemoryTaskManager(HistoryManager historyManager) {
-        return new InMemoryTaskManager();
-    }
 
-    public static HttpTaskManager getDefault1(HistoryManager historyManager) throws IOException, InterruptedException {
-        return new HttpTaskManager( "http://localhost:" + KVServer.PORT);
-    }
-
-    public static HistoryManager getDefaultHistory() {
+    public static HistoryManager getDefaultHistoryManager() {
         return new InMemoryHistoryManager();
     }
 
-
-public static FileBackedTasksManager getDefault() {
-       File file = new File("file.csv");
-        return new FileBackedTasksManager(file);
-
+    public static InMemoryTaskManager getDefault() {
+        return new InMemoryTaskManager();
     }
 
-   // public static services.HistoryManager getDefaultHistory() {
-   //     return new InMemoryHistoryManager();
-   // }
+    public static HttpTaskManager getDefaultHttpManager() throws IOException, InterruptedException {
+        HttpTaskManager httpTaskManager = new HttpTaskManager("http://localhost:8078");
+        httpTaskManager.load();
+        return httpTaskManager;
+    }
 
+    public static FileBackedTasksManager getBackedTaskManager(File file) {
+        return FileBackedTasksManager.loadFromFile(file);
+    }
+
+    public static Gson getGson() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.serializeNulls();
+        gsonBuilder.registerTypeAdapter(LocalDateTime.class, GsonAdapters.localDateTime().nullSafe())
+                .registerTypeAdapter(Duration.class, GsonAdapters.duration().nullSafe());
+        return gsonBuilder.create();
+    }
 
 }
 

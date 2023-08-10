@@ -14,6 +14,15 @@ public class Task implements EngineExecutionContext {
     private LocalDateTime endTime;
     public Status status;
 
+  /*  public Task(int id, String name, String description, int duration, LocalDateTime startTime, Status status) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.duration = duration;
+        this.startTime = startTime;
+        this.status = status;
+    }*/
+
 
     public int getDuration() {
         return duration;

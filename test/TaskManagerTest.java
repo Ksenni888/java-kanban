@@ -22,7 +22,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-class TaskManagerTest<T extends TaskManager> extends InMemoryTaskManager {
+public class TaskManagerTest<T extends TaskManager> extends InMemoryTaskManager {
     private InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
 
     @Test

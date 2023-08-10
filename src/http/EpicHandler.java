@@ -5,7 +5,6 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import models.Epic;
 import models.Status;
-import models.Task;
 import services.TaskManager;
 
 import java.io.IOException;
@@ -64,31 +63,16 @@ public class EpicHandler implements HttpHandler {
             try {
                 String query = httpExchange.getRequestURI().getQuery();
                 if (query == null) {
-                    /*
-                    *  Epic epic5 = new Epic(); //задаем новый эпик вместо эпика с id=6
-        epic5.setId(15);
-        epic5.setName("Вызвать такси");
-        epic5.setDescription("Прогулка");
-        epic5.setStatus(models.Status.NEW);
-        epicRepository.save(epic5);
-        allTasks.add(epic5);
-        *
-        * epics.setStartTimeEpic(startTime);
-                        epics.setDurationEpic(duration);
-                        epics.setEndTimeEpic(endTime);
-        *
-        * */
-
                     String bodyRequest = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
                     JsonObject object = JsonParser.parseString(bodyRequest).getAsJsonObject();
                     Epic epic = new Epic();
                     epic.setId(object.get("id").getAsInt());
                     epic.setName(object.get("name").getAsString());
                     epic.setDescription(object.get("description").getAsString());
-                   epic.setDurationEpic(object.get("duration").getAsInt());
-                   DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-                   epic.setStartTimeEpic((LocalDateTime.parse(object.get("startTime").getAsString(), format)));
-                   epic.setEndTimeEpic((LocalDateTime.parse(object.get("endTime").getAsString(), format)));
+                    epic.setDurationEpic(object.get("duration").getAsInt());
+                    DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+                    epic.setStartTimeEpic((LocalDateTime.parse(object.get("startTime").getAsString(), format)));
+                    epic.setEndTimeEpic((LocalDateTime.parse(object.get("endTime").getAsString(), format)));
                     epic.setStatus(Status.valueOf(object.get("status").getAsString()));
                     taskManager.saveEpic(epic);
                     response = "Создан эпик с id=" + object.get("id").getAsInt();
@@ -103,10 +87,10 @@ public class EpicHandler implements HttpHandler {
                     }
                 }
 
-            } catch(StringIndexOutOfBoundsException e){
+            } catch (StringIndexOutOfBoundsException e) {
                 rCode = 400;
                 response = "В запросе нет id";
-            } catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 rCode = 400;
                 response = "Неверный формат id";
             }
@@ -119,36 +103,32 @@ public class EpicHandler implements HttpHandler {
                     Epic epic = (Epic) taskManager.getEpicById(id);
                     if (epic != null) {
                         Gson gson = new Gson();
-                       String resp = gson.toJson(taskManager.getListSubtask(id).toString());
+                        String resp = gson.toJson(taskManager.getListSubtask(id).toString());
 
 
-                        response = "Эпик по id: " + epic +"\n"+"подзадачи: " + resp;
+                        response = "Эпик по id: " + epic + "\n" + "подзадачи: " + resp;
                     } else {
                         response = "Эпик с id=" + id + " не найден";
                     }
                     rCode = 200;
-            }catch (StringIndexOutOfBoundsException e) {
+                } catch (StringIndexOutOfBoundsException e) {
                     rCode = 400;
                     response = "В запросе нет id";
                 } catch (NumberFormatException e) {
                     rCode = 400;
                     response = "Неверный формат id";
-                }}
-
-            else if (query == null) {
+                }
+            } else if (query == null) {
                 System.out.println("Получить все эпики");
                 GsonBuilder gsonBuilder = new GsonBuilder();
                 Gson gson = gsonBuilder.create();
                 String json = gson.toJson("Все эпики: " + taskManager.getAllEpics());
                 response = json;
                 rCode = 200;
-            }
-
-            else {
+            } else {
                 response = "Некорректный запрос";
-            }}
-
-        else if (httpExchange.getRequestMethod().equals("OPTIONS")) {
+            }
+        } else if (httpExchange.getRequestMethod().equals("OPTIONS")) {
             String query = httpExchange.getRequestURI().getQuery();
             if (query != null) {
                 try {
@@ -159,7 +139,7 @@ public class EpicHandler implements HttpHandler {
                         GsonBuilder gsonBuilder = new GsonBuilder();
                         gsonBuilder.setPrettyPrinting();
                         Gson gson = gsonBuilder.create();
-                        String json= gson.toJson("Все подзадачи эпика id="+id+": "+taskManager.getListSubtask(id));
+                        String json = gson.toJson("Все подзадачи эпика id=" + id + ": " + taskManager.getListSubtask(id));
 
                         response = json;
                     } else {
@@ -180,11 +160,6 @@ public class EpicHandler implements HttpHandler {
             }
 
         }
-
-
-
-
-
         httpExchange.sendResponseHeaders(200, 0);
 
         try (OutputStream os = httpExchange.getResponseBody()) {

@@ -6,6 +6,7 @@ import models.Task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 public interface TaskManager {
     void printListSubtaskIdEpic(int id); //печатаем подзадачи эпика по нужному id
@@ -38,13 +39,14 @@ public interface TaskManager {
 
     void changeStatusEpic(int id); //изменить статус заданного эпика
 
-    ArrayList<Task> getAllTasks(); //заполнение списка всех задач
+    List<Task> getAllallTasks(); //получить список всех задач
 
-    ArrayList<Task> getAllTasks2(); //получить список всех задач
 
-    ArrayList<Subtask> getAllSubtasks(); //получить список всех подзадач
+    List<Task> getAllTasks(); //получить список всех задач
 
-    ArrayList<Epic> getAllEpics(); //получить список всех эпиков
+   List<Subtask> getAllSubtasks(); //получить список всех подзадач
+
+    List<Epic> getAllEpics(); //получить список всех эпиков
 
     Task getTaskById(int id); //получить задачу по id
 
@@ -52,9 +54,11 @@ public interface TaskManager {
 
     Task getSubtaskById(int id); //получить подзадачу id
 
-    ArrayList<Subtask> getListSubtask(int id); //получить список подзадач эпика по id
+    List<Subtask> getListSubtask(int id); //получить список подзадач эпика по id
 
      List<Task> getHistory();
+
+    TreeSet<Task> getPrioritizedTasks();
 }
 
 

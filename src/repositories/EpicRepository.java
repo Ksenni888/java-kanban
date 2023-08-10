@@ -1,10 +1,9 @@
 package repositories;
 
 import models.Epic;
-import models.Task;
-
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class EpicRepository {
     public HashMap<Integer, Epic> getEpics() {
@@ -23,8 +22,8 @@ public class EpicRepository {
         epics.remove(id);
     }
 
-    public ArrayList<Epic> getAll() { //список всех эпиков
-        ArrayList<Epic> EpicsFromHash = new ArrayList<>();
+    public List<Epic> getAll() { //список всех эпиков
+       List<Epic> EpicsFromHash = new ArrayList<>();
         for (Epic tas : epics.values()) {
             EpicsFromHash.add(tas);
         }

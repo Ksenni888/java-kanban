@@ -1,6 +1,5 @@
 package services;
 
-
 import models.Epic;
 import models.Status;
 import models.Subtask;
@@ -8,22 +7,17 @@ import models.Task;
 import repositories.*;
 import models.Enum;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
 
 
 public class InMemoryTaskManager implements TaskManager {
     public static TaskRepository tasksRepository = new TaskRepository();
-    protected static EpicRepository epicRepository = new EpicRepository();
-    protected static SubtaskRepository subtaskRepository = new SubtaskRepository();
+    public static EpicRepository epicRepository = new EpicRepository();
+    public static SubtaskRepository subtaskRepository = new SubtaskRepository();
     protected static ArrayList<Task> allTasks = new ArrayList<>();
- //  private final HistoryManager historyManager = new InMemoryHistoryManager();
-
-  /*  public InMemoryTaskManager(HistoryManager historyManager) {
-        this.historyManager = historyManager;
-    }*/
-
 
     public static int getCOUNT() {
         return COUNT++;
@@ -31,7 +25,67 @@ public class InMemoryTaskManager implements TaskManager {
 
     private static int COUNT = 0;
 
-    private HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
+    private HistoryManager inMemoryHistoryManager = Managers.getDefaultHistoryManager();
+
+
+    public void validator() {
+        System.out.println("*******************************" + "\n" + "Задачи, у которых нужно поменять StartTime:" + "\n");
+        TreeSet<Task> sortTasksTime = new TreeSet<>(new Comparator<>() {
+
+            @Override
+            public int compare(Task o1, Task o2) {
+                if (o1.getStartTime() == o2.getStartTime()) {
+
+                } else {
+
+                    if ((o1.getStartTime().isBefore(o2.getStartTime()))) {
+                        return -1;
+                    } else if ((o1.getStartTime().isAfter(o2.getStartTime()))) {
+                        return 1;
+                    } else {
+                        System.out.println("id=[" + o1.getId() + "]" + " время начала: " + o1.getStartTime() + " совпадает с: " + "id=[" + o2.getId() + "]" + " время начала: " + o2.getStartTime() + "\n");
+                        return 1;
+                    }
+                }
+                return 0;
+            }
+
+        });
+        sortTasksTime.addAll(getAllTasks());
+        sortTasksTime.addAll(getAllSubtasks());
+    }
+
+
+    public TreeSet<Task> getPrioritizedTasks() {
+
+
+        TreeSet<Task> sortTasksTime = new TreeSet<>(new Comparator<Task>() {
+
+            @Override
+            public int compare(Task o1, Task o2) {
+                if ((o1.getStartTime().isBefore(o2.getStartTime()))) {
+                    return -1;
+                } else if ((o1.getStartTime().isAfter(o2.getStartTime()))) {
+                    return 1;
+                } else {
+                    return 1;
+                }
+            }
+
+        });
+
+
+        sortTasksTime.addAll(getAllTasks());
+        sortTasksTime.addAll(getAllSubtasks());
+
+        System.out.println("*******************************" + "\n" + "Сортировка задач по времени начала:" + "\n");
+        for (Task ts : sortTasksTime) {
+
+            System.out.println(ts);
+        }
+
+        return sortTasksTime;
+    }
 
 
     @Override
@@ -41,9 +95,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void printAllTask() { //печать всех задач (задачи+эпики+подзадачи)
-        ArrayList<Task> allTasks = this.getAllTasks2();
-        ArrayList<Epic> allEpics = this.getAllEpics();
-        ArrayList<Subtask> allSubtasks = this.getAllSubtasks();
+        List<Task> allTasks = this.getAllTasks();
+        List<Epic> allEpics = this.getAllEpics();
+        List<Subtask> allSubtasks = this.getAllSubtasks();
         System.out.println("id,type,name,status,description,epic");
         for (Task task2 : allTasks) {
             System.out.println(task2.getId() + "," + Enum.TASK + "," + task2.getName() + "," + task2.getStatus() + "," + task2.getDescription());
@@ -182,204 +236,35 @@ public class InMemoryTaskManager implements TaskManager {
             } else {
                 (epicRepository.get(id)).setStatus(Status.IN_PROGRESS);
             }
+        } else {
+            if (epicRepository.get(id) != null) {
+                epicRepository.get(id).setStatus(Status.NEW);
+            }
         }
-        else
-        { if (epicRepository.get(id)!=null) {epicRepository.get(id).setStatus(Status.NEW);}}
 
     }
 
+    public List<Task> getAllallTasks() {
 
- public ArrayList<Task> getAllTasks() {
-     allTasks.addAll(tasksRepository.getAll());
-     allTasks.addAll(subtaskRepository.getAll());
-     allTasks.addAll(epicRepository.getAll());
-
-
-
-   /*  Task task = new Task()
-             .setId(COUNT++)
-             .setName("Позвонить подруге")
-             .setDescription("Description")
-             .setStatus(models.Status.IN_PROGRESS);
-     tasksRepository.save(task);
-     allTasks.add(task);
-
-
-        //заполнение списка всех задач отключила, т.к. загружаются из файла
-    /*    Task task = new Task()
-                .setId(COUNT++)
-                .setName("Позвонить подруге")
-                .setDescription("Description")
-                .setStatus(models.Status.IN_PROGRESS);
-        tasksRepository.save(task);
-        allTasks.add(task);
-
-        Task task2 = new Task()
-                .setId(COUNT++)
-                .setName("Забрать посылку")
-                .setDescription("Забрать посылку на почте")
-                .setStatus(models.Status.IN_PROGRESS);
-        tasksRepository.save(task2);
-        allTasks.add(task2);
-
-        Epic epic = new Epic();
-        epic.setId(COUNT++);
-        epic.setName("Сварить пельмени");
-        epic.setDescription("Рецепт пельменей");
-        epic.setStatus(models.Status.IN_PROGRESS);
-        epicRepository.save(epic);
-        allTasks.add(epic);
-
-        Subtask subtask = new Subtask();
-        subtask.setId(COUNT++);
-        epic.setIdSubtask(subtask.getId());
-        subtask.setName("Налить воду в кастрюлю");
-        subtask.setDescription("Налить воды");
-        subtask.setStatus(models.Status.IN_PROGRESS);
-        subtask.setEpicID(epic.getId());
-        subtaskRepository.save(subtask);
-        allTasks.add(subtask);
-
-        Subtask subtask2 = new Subtask();
-        subtask2.setId(COUNT++);
-        epic.setIdSubtask(subtask2.getId());
-        subtask2.setName("Дождатья кипения воды");
-        subtask2.setDescription("Кипящая вода");
-        subtask2.setStatus(models.Status.NEW);
-        subtask2.setEpicID(epic.getId());
-        subtaskRepository.save(subtask2);
-        allTasks.add(subtask2);
-
-        Subtask subtask3 = new Subtask();
-        subtask3.setId(COUNT++);
-        epic.setIdSubtask(subtask3.getId());
-        subtask3.setName("Бросить пельмени");
-        subtask3.setDescription("Пельмени");
-        subtask3.setStatus(models.Status.NEW);
-        subtask3.setEpicID(epic.getId());
-        subtaskRepository.save(subtask3);
-        allTasks.add(subtask3);
-
-        Epic epic2 = new Epic();
-        epic2.setId(COUNT++);
-        epic2.setName("Погулять с собакой");
-        epic2.setDescription("Прогулка");
-        epic2.setStatus(models.Status.NEW);
-        epicRepository.save(epic2);
-        allTasks.add(epic2);
-
-        Subtask subtask4 = new Subtask();
-        subtask4.setId(COUNT++);
-        epic2.setIdSubtask(subtask4.getId());
-        subtask4.setName("Одеться");
-        subtask4.setDescription("Одеться по погоде");
-        subtask4.setStatus(models.Status.NEW);
-        subtask4.setEpicID(epic2.getId());
-        subtaskRepository.save(subtask4);
-        allTasks.add(subtask4);
-
-        Task task3 = new Task() //задаем новую задачу вместо задачи с id = 0
-                .setId(COUNT++)
-                .setName("Позвонить другу")
-                .setDescription("Description")
-                .setStatus(models.Status.IN_PROGRESS);
-        tasksRepository.save(task3);
-        allTasks.add(task3);
-
-
-        Epic epic3 = new Epic(); //задаем новый эпик вместо эпика с id=6
-        epic3.setId(COUNT++);
-        epic3.setName("Погулять с кошкой");
-        epic3.setDescription("Прогулка");
-        epic3.setStatus(models.Status.NEW);
-        epicRepository.save(epic3);
-        allTasks.add(epic3);
-
-        Subtask subtask5 = new Subtask(); //задаем новую подзадачу вместо подзадачи с id=3
-        subtask5.setId(COUNT++);
-        subtask5.setName("Налить воды в кастрюлю");
-        subtask5.setDescription("Description");
-        subtask5.setStatus(models.Status.DONE);
-        subtask5.setEpicID(epic3.getId());
-        subtaskRepository.save(subtask5);
-        allTasks.add(subtask5);
-
-        // Задание спринта 5:
-        // создать 2 задачи
-        Task task4 = new Task() //задаем новую задачу вместо задачи с id = 0
-                .setId(COUNT++)
-                .setName("Помыть посуду")
-                .setDescription("Description")
-                .setStatus(models.Status.IN_PROGRESS);
-        tasksRepository.save(task4);
-        allTasks.add(task4);
-        Task task5 = new Task() //задаем новую задачу вместо задачи с id = 0
-                .setId(10)
-                .setName("Помыть посуду")
-                .setDescription("Description")
-                .setStatus(models.Status.IN_PROGRESS);
-        tasksRepository.save(task5);
-        allTasks.add(task5);
-        //эпик с 3 подзадачами
-        Epic epic4 = new Epic(); //задаем новый эпик вместо эпика с id=6
-        epic4.setId(COUNT++);
-        epic4.setName("Собрать вещи для переезда");
-        epic4.setDescription("Прогулка");
-        epic4.setStatus(models.Status.NEW);
-        epicRepository.save(epic4);
-        allTasks.add(epic4);
-        //3 подзадачи эпика
-        Subtask subtask6 = new Subtask(); //задаем новую подзадачу вместо подзадачи с id=3
-        subtask6.setId(COUNT++);
-        subtask6.setName("Приготовить чемоданы");
-        subtask6.setDescription("Description");
-        subtask6.setStatus(models.Status.DONE);
-        subtask6.setEpicID(epic4.getId());
-        subtaskRepository.save(subtask6);
-        allTasks.add(subtask6);
-
-        Subtask subtask7 = new Subtask(); //задаем новую подзадачу вместо подзадачи с id=3
-        subtask7.setId(COUNT++);
-        subtask7.setName("Собрать вещи");
-        subtask7.setDescription("Description");
-        subtask7.setStatus(models.Status.DONE);
-        subtask7.setEpicID(epic4.getId());
-        subtaskRepository.save(subtask7);
-        allTasks.add(subtask7);
-
-        Subtask subtask8 = new Subtask(); //задаем новую подзадачу вместо подзадачи с id=3
-        subtask8.setId(COUNT++);
-        subtask8.setName("Упаковать вещи");
-        subtask8.setDescription("Description");
-        subtask8.setStatus(models.Status.DONE);
-        subtask8.setEpicID(epic4.getId());
-        subtaskRepository.save(subtask8);
-        allTasks.add(subtask8);
-        //эпик без подзадач
-        Epic epic5 = new Epic(); //задаем новый эпик вместо эпика с id=6
-        epic5.setId(15);
-        epic5.setName("Вызвать такси");
-        epic5.setDescription("Прогулка");
-        epic5.setStatus(models.Status.NEW);
-        epicRepository.save(epic5);
-        allTasks.add(epic5);
-
-*/
+        allTasks.addAll(tasksRepository.getAll());
+        allTasks.addAll(subtaskRepository.getAll());
+        allTasks.addAll(epicRepository.getAll());
         return allTasks;
     }
 
+
     @Override
-    public ArrayList<Task> getAllTasks2() { //список всех задач
+    public List<Task> getAllTasks() { //список всех задач
         return tasksRepository.getAll();
     }   //получить список всех задач
 
     @Override
-    public ArrayList<Subtask> getAllSubtasks() { //список всех подзадач
+    public List<Subtask> getAllSubtasks() { //список всех подзадач
         return subtaskRepository.getAll();
     } //получить список всех подзадач
 
     @Override
-    public ArrayList<Epic> getAllEpics() { //спивок всех эпиков
+    public List<Epic> getAllEpics() { //спивок всех эпиков
         return epicRepository.getAll();
     } //получить список всех эпиков
 
@@ -402,26 +287,25 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task getSubtaskById(int id) { //получить подзадачу по id
+    public Subtask getSubtaskById(int id) { //получить подзадачу по id
         inMemoryHistoryManager.add(subtaskRepository.get(id));
         // inMemoryHistoryManager.getHistory(id, subtaskRepository.get(id));
         return subtaskRepository.get(id);
     }
 
     @Override
-    public ArrayList<Subtask> getListSubtask(int id) {
+    public List<Subtask> getListSubtask(int id) {
         return subtaskRepository.getListSubtask(id);
     } //получить список подзадач эпика по id
 
-  @Override
-   public List<Task> getHistory() {
-     return inMemoryHistoryManager.getHis2();
+    @Override
+    public List<Task> getHistory() {
+        return inMemoryHistoryManager.getHis2();
     }
 
     public HistoryManager getInMemoryHistoryManager() {
         return inMemoryHistoryManager;
     }
-
 
 
 }

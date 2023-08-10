@@ -2,41 +2,37 @@ package repositories;
 
 import models.*;
 import models.Enum;
-import services.HistoryManager;
-import services.InMemoryHistoryManager;
 import services.InMemoryTaskManager;
-import services.TaskManager;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.TreeSet;
+import java.util.List;
 
 import static models.Enum.*;
 import static services.InMemoryHistoryManager.historyHash;
 
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-   private final File file;
-
+    private File file;
     private Enum Enum;
-  // protected static InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
-  //  protected static InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
-  public FileBackedTasksManager() {
-      this.file = null;
-  }
+
+    public FileBackedTasksManager() {
+        this.file = null;
+    }
+
     public FileBackedTasksManager(File file) {
         this.file = file;
     }
-public static FileBackedTasksManager loadFromFile (File file){
+
+    public static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager tasksManager = new FileBackedTasksManager(file);
         tasksManager.load();
         return tasksManager;
-}
+    }
+
     public static class ManagerSaveException extends RuntimeException {
         public ManagerSaveException(final String message) {
             super(message);
@@ -45,13 +41,15 @@ public static FileBackedTasksManager loadFromFile (File file){
 
     public void save() {
         try {
-            FileWriter fileWriter = new FileWriter(file);
+
+            FileWriter fileWriter;
+            fileWriter = new FileWriter(file);
             System.out.println("id,type,name,status,description,epic,startTime,duration,endTime");
             fileWriter.write("id,type,name,status,description,epic,startTime,duration,endTime\n");
 
-            for (Task task2 : getAllTasks2()) {
+            for (Task task2 : getAllTasks()) {
 
-                System.out.println(task2.getId() + "," +TASK + "," + task2.getName() + "," + task2.getStatus() + "," + task2.getDescription() + "," + task2.getId() + "," + task2.getStartTime() + "," + task2.getDuration() + "," + task2.getEndTime());
+                System.out.println(task2.getId() + "," + TASK + "," + task2.getName() + "," + task2.getStatus() + "," + task2.getDescription() + "," + task2.getId() + "," + task2.getStartTime() + "," + task2.getDuration() + "," + task2.getEndTime());
                 fileWriter.write(task2.getId() + "," + TASK + "," + task2.getName() + "," + task2.getStatus() + "," + task2.getDescription() + "," + task2.getId() + "," + task2.getStartTime() + "," + task2.getDuration() + "," + task2.getEndTime() + "\n");
             }
 
@@ -83,7 +81,7 @@ public static FileBackedTasksManager loadFromFile (File file){
     public void load() {
         try { //id,type,name,status,description,epic,startTime,duration,endTime
 
-            String content = Files.readString(Paths.get(file.getPath()));
+            String content = Files.readString(Paths.get("file.csv"));
             String[] str = content.split("\n");
             if (str.length > 1) {
                 for (int i = 1; i < str.length - 2; i++) {
@@ -146,16 +144,16 @@ public static FileBackedTasksManager loadFromFile (File file){
                         int l = Integer.parseInt(s);
                         if (tasksRepository.getTasks().containsKey(l) && (!tasksRepository.getTasks().isEmpty())) {
                             //historyHash.put(l, inMemoryHistoryManager.linkLast(tasksRepository.getTasks().get(l)));
-                           getTaskById(l);
+                            getTaskById(l);
 
 
                         }
                         if (subtaskRepository.getSubtasks().containsKey(l) && (!subtaskRepository.getSubtasks().isEmpty())) {
-                          //  historyHash.put(l, inMemoryHistoryManager.linkLast(subtaskRepository.getSubtasks().get(l)));
+                            //  historyHash.put(l, inMemoryHistoryManager.linkLast(subtaskRepository.getSubtasks().get(l)));
                             getSubtaskById(l);
                         }
                         if (epicRepository.getEpics().containsKey(l) && (!epicRepository.getEpics().isEmpty())) {
-                         //   historyHash.put(l, inMemoryHistoryManager.linkLast(epicRepository.getEpics().get(l)));
+                            //   historyHash.put(l, inMemoryHistoryManager.linkLast(epicRepository.getEpics().get(l)));
                             getEpicById(l);
                         }
                     }
@@ -168,68 +166,9 @@ public static FileBackedTasksManager loadFromFile (File file){
         }
     }
 
-
-    public void validator() {
-        System.out.println("*******************************" + "\n" + "Задачи, у которых нужно поменять StartTime:" + "\n");
-        TreeSet<Task> sortTasksTime = new TreeSet<>(new Comparator<>() {
-
-            @Override
-            public int compare(Task o1, Task o2) {
-                if (o1.getStartTime() == o2.getStartTime()) {
-
-                } else {
-
-                    if ((o1.getStartTime().isBefore(o2.getStartTime()))) {
-                        return -1;
-                    } else if ((o1.getStartTime().isAfter(o2.getStartTime()))) {
-                        return 1;
-                    } else {
-                        System.out.println("id=[" + o1.getId() + "]" + " время начала: " + o1.getStartTime() + " совпадает с: " + "id=[" + o2.getId() + "]" + " время начала: " + o2.getStartTime() + "\n");
-                        return 1;
-                    }
-                }
-                return 0;
-            }
-
-        });
-        sortTasksTime.addAll(getAllTasks2());
-        sortTasksTime.addAll(getAllSubtasks());
-    }
-
-    public TreeSet<Task> getPrioritizedTasks() {
-
-
-        TreeSet<Task> sortTasksTime = new TreeSet<>(new Comparator<Task>() {
-
-            @Override
-            public int compare(Task o1, Task o2) {
-                if ((o1.getStartTime().isBefore(o2.getStartTime()))) {
-                    return -1;
-                } else if ((o1.getStartTime().isAfter(o2.getStartTime()))) {
-                    return 1;
-                } else {
-                    return 1;
-                }
-            }
-
-        });
-
-
-        sortTasksTime.addAll(getAllTasks2());
-        sortTasksTime.addAll(getAllSubtasks());
-
-        System.out.println("*******************************" + "\n" + "Сортировка задач по времени начала:" + "\n");
-        for (Task ts : sortTasksTime) {
-
-            System.out.println(ts);
-        }
-
-        return sortTasksTime;
-    }
-
-
     public static void main(String[] args) {
-        InMemoryTaskManager manager = (InMemoryTaskManager) Managers.getDefault();
+        InMemoryTaskManager manager = Managers.getDefault();
+
         /* Тут создаем файл из задач, в главном main загружаются задачи в программу из этого файла*/
 
         File file = new File("file.csv");
@@ -242,8 +181,7 @@ public static FileBackedTasksManager loadFromFile (File file){
                 .setStatus(models.Status.IN_PROGRESS);
         task6.setDuration(2);
         task6.setStartTime(LocalDateTime.of(2020, 1, 2, 12, 0, 0, 0));
-      //  InMemoryTaskManager.tasksRepository.save(task6);
-     fileBackedTasksManager.createTask(task6);
+        fileBackedTasksManager.saveTask(task6);
         InMemoryTaskManager.allTasks.add(task6);
 
         Task task7 = new Task()
@@ -253,7 +191,7 @@ public static FileBackedTasksManager loadFromFile (File file){
                 .setStatus(models.Status.IN_PROGRESS);
         task7.setDuration(25);
         task7.setStartTime(LocalDateTime.of(2020, 1, 2, 12, 0, 0, 0));
-        InMemoryTaskManager.tasksRepository.save(task7);
+        fileBackedTasksManager.saveTask(task7);
         InMemoryTaskManager.allTasks.add(task7);
 
 
@@ -262,7 +200,7 @@ public static FileBackedTasksManager loadFromFile (File file){
         epic6.setName("Сделать уборку");
         epic6.setDescription("Сделать уборку");
         epic6.setStatus(models.Status.IN_PROGRESS);
-        InMemoryTaskManager.epicRepository.save(epic6);
+        fileBackedTasksManager.saveEpic(epic6);
         InMemoryTaskManager.allTasks.add(epic6);
 
 
@@ -278,61 +216,33 @@ public static FileBackedTasksManager loadFromFile (File file){
         InMemoryTaskManager.subtaskRepository.save(subtask9);
         InMemoryTaskManager.allTasks.add(subtask9);
 
-        Subtask subtask90 = new Subtask();
-        subtask90.setId(6);
-        epic6.setIdSubtask(subtask9.getId());
-        subtask90.setName("Вымыть полы");
-        subtask90.setDescription("Вымыть полы");
-        subtask90.setStatus(models.Status.NEW);
-        subtask90.setEpicID(epic6.getId());
-        subtask90.setStartTime(LocalDateTime.of(2020, 1, 2, 12, 50, 0, 0));
-        subtask90.setDuration(10);
-        InMemoryTaskManager.subtaskRepository.save(subtask90);
-        InMemoryTaskManager.allTasks.add(subtask90);
-
-
-        Subtask subtask10 = new Subtask();
-        subtask10.setId(8);
-        epic6.setIdSubtask(subtask10.getId());
-        subtask10.setName("Протереть пыль");
-        subtask10.setDescription("Протереть пыль");
-        subtask10.setStatus(Status.IN_PROGRESS);
-        subtask10.setEpicID(epic6.getId());
-        subtask10.setStartTime(null);
-        subtask10.setDuration(20);
-        InMemoryTaskManager.subtaskRepository.save(subtask10);
-        InMemoryTaskManager.allTasks.add(subtask10);
-
-
-    //    changeStatusEpic(2);
+        fileBackedTasksManager.changeStatusEpic(2);
 
 
         System.out.println("Вывод эпика по заданному id: " + manager.getEpicById(2));
-        System.out.println("Вывод задачи по заданному id: " + manager.getTaskById(9));
+        System.out.println("Вывод задачи по заданному id: " + manager.getTaskById(1));
         System.out.println("Вывод подзадачи по заданному id: " + manager.getSubtaskById(3));
-        System.out.println("Вывод подзадачи по заданному id: " + manager.getSubtaskById(6));
         //   inMemoryTaskManager.deleteAllTask();
         //   inMemoryTaskManager.deleteAllEpics();
         //   inMemoryTaskManager.deleteAllSubtask();
-        fileBackedTasksManager.removeSubtaskById(0);
-        fileBackedTasksManager.removeSubtaskById(0);
-        fileBackedTasksManager.getPrioritizedTasks();
+        fileBackedTasksManager.removeTaskById(9);
+
         fileBackedTasksManager.validator();
         fileBackedTasksManager.save();
 
     }
 
-public void createTask(Task task) {
+    public void saveTask(Task task) {
         super.saveTask(task);
         save();
-}
+    }
 
-public void createEpic(Epic epic) {
+    public void saveEpic(Epic epic) {
         super.saveEpic(epic);
         save();
-}
+    }
 
-    public void createSubtask(Subtask subtask) {
+    public void saveSubtask(Subtask subtask) {
         super.saveSubtask(subtask);
         save();
     }
@@ -342,17 +252,18 @@ public void createEpic(Epic epic) {
         save();
 
     } //удаление всех задач из общего списка
-    public void  deleteAllTask(){
+
+    public void deleteAllTask() {
         super.deleteAllTask();
         save();
     }
 
-    public void deleteAllEpics(){
+    public void deleteAllEpics() {
         super.deleteAllEpics();
         save();
     }
 
-    public void deleteAllSubtask(){
+    public void deleteAllSubtask() {
         super.deleteAllSubtask();
         save();
     }
@@ -372,39 +283,52 @@ public void createEpic(Epic epic) {
         save();
     }
 
-    public void changeStatusEpic(int id){
+    public void changeStatusEpic(int id) {
         super.changeStatusEpic(id);
         save();
 
     }
 
-    public void changeStatusTask(int id, models.Status status){
-        super.changeStatusTask(id,status);
+    public void changeStatusTask(int id, models.Status status) {
+        super.changeStatusTask(id, status);
         save();
     }
-    public void changeStatusSubtask(int id, models.Status status){
-        super.changeStatusSubtask(id,status);
+
+    public void changeStatusSubtask(int id, models.Status status) {
+        super.changeStatusSubtask(id, status);
         save();
     }
-    
 
-/*
-* ArrayList<Subtask> getAllSubtasks(); //получить список всех подзадач
+    public Task getTaskById(int id) {
+        Task task = super.getTaskById(id);
+        save();
+        return task;
+    }
 
-    ArrayList<Epic> getAllEpics(); //получить список всех эпиков
+    public Epic getEpicById(int id) {
+        Epic epic = super.getEpicById(id);
+        save();
+        return epic;
+    }
 
-    Task getTaskById(int id); //получить задачу по id
+    public Subtask getSubtaskById(int id) {
+        Subtask subtask = super.getSubtaskById(id);
+        save();
+        return subtask;
+    }
 
-    Task getEpicById(int id); //получить эпик по id
+    public List<Subtask> getListSubtask(int id) {
+        List<Subtask> listSubtask = getListSubtask(id);
+        save();
+        return listSubtask;
+    }
 
-    Task getSubtaskById(int id); //получить подзадачу id
+    public List<Task> getHistory() {
+        List<Task> getHistory = getHistory();
+        save();
+        return getHistory;
+    }
 
-    ArrayList<Subtask> getListSubtask(int id); //получить список подзадач эпика по id
-
-     List<Task> getHistory();
-*
-*
-* */
 
 }
 

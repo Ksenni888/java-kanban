@@ -1,27 +1,18 @@
-package Tests;
-
-import models.Enum;
 import models.Epic;
 import models.Subtask;
 import models.Task;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import repositories.FileBackedTasksManager;
-import services.InMemoryHistoryManager;
 import services.InMemoryTaskManager;
-
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static repositories.FileBackedTasksManager.loadFromFile;
 import static services.InMemoryHistoryManager.historyHash;
 
 class FileBackedTasksManagerTest extends InMemoryTaskManager {
-    private models.Enum Enum;
     private final File file = new File("file.csv");
     private final FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file);
 
@@ -75,7 +66,6 @@ public void NoTasks() {
         InMemoryTaskManager.subtaskRepository.save(subtask9);
         InMemoryTaskManager.allTasks.add(subtask9);
 
-      //  getInMemoryHistoryManager().getHistoryHash().clear();
         fileBackedTasksManager.save();
         loadFromFile(file);
         ArrayList<Task> expectedTask = new ArrayList<>();
@@ -90,6 +80,7 @@ public void NoTasks() {
         deleteAllEpics();
         deleteAllTask();
     }
+
     @Test
     public void EpicWhithoutSubtasks() {
         deleteAllEpics();
