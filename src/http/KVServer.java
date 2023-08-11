@@ -15,25 +15,53 @@ import com.sun.net.httpserver.HttpServer;
  * Постман: https://www.getpostman.com/collections/a83b61d9e1c81c10575c
  */
 public class KVServer {
-    public static final int PORT = 8078;
-    private final String apiToken;
-    private final HttpServer server;
+    private static final int PORT = 8078;
+    private String apiToken;
+    private HttpServer server;
     private final Map<String, String> data = new HashMap<>();
 
-    public KVServer() throws IOException {
-        apiToken = generateApiToken();
+    public KVServer() {
+       try {
+           apiToken = generateApiToken();
         server = create(new InetSocketAddress("localhost", PORT), 0);
         server.createContext("/register", this::register);
         server.createContext("/save", this::save);
         server.createContext("/load", this::load);
+       }catch (IOException e){ e.printStackTrace(); }
+    }
+
+    public void start() {
+        System.out.println("Запускаем сервер на порту " + PORT);
+        System.out.println("Открой в браузере http://localhost:" + PORT + "/");
+        System.out.println("API_TOKEN: " + apiToken);
+        server.start();
+    }
+    public void stop() {
+        server.stop(1);
+    }
+
+    protected boolean hasAuth(HttpExchange h) {
+        String rawQuery = h.getRequestURI().getRawQuery();
+        return rawQuery != null && (rawQuery.contains("API_TOKEN=" + apiToken) || rawQuery.contains("API_TOKEN=DEBUG"));
+    }
+
+    protected String readText(HttpExchange h) throws IOException {
+        return new String(h.getRequestBody().readAllBytes(), UTF_8);
+    }
+
+    protected void sendText(HttpExchange h, String text) throws IOException {//показывает текст в previw
+        byte[] resp = text.getBytes(UTF_8);
+        h.getResponseHeaders().add("Content-Type", "application/json");
+        h.sendResponseHeaders(200, resp.length);
+        h.getResponseBody().write(resp);
     }
 
     private void load(HttpExchange h) throws IOException {
-        try (h) {
+        try {
             System.out.println("\n/load");
             if (!hasAuth(h)) {
                 System.out.println("Запрос не авторизован, нужен параметр в query API_TOKEN со значением API-ключа");
-                h.sendResponseHeaders(403, 0);
+                h.sendResponseHeaders(401, 0);
                 return;
             }
             if ("GET".equals(h.getRequestMethod())) {
@@ -59,7 +87,6 @@ public class KVServer {
         } finally {
             h.close();
         }
-        // TODO Добавьте получение значения по ключу
     }
 
     private void save(HttpExchange h) throws IOException {
@@ -95,9 +122,6 @@ public class KVServer {
         }
     }
 
-    public String getApiToken() {
-        return apiToken;
-    }
 
     private void register(HttpExchange h) throws IOException {
         try {
@@ -113,35 +137,8 @@ public class KVServer {
         }
     }
 
-    public void start() {
-        System.out.println("Запускаем сервер на порту " + PORT);
-        System.out.println("Открой в браузере http://localhost:" + PORT + "/");
-        System.out.println("API_TOKEN: " + apiToken);
-        server.start();
-    }
-
     private String generateApiToken() {
         return "" + System.currentTimeMillis();
     }
 
-    protected boolean hasAuth(HttpExchange h) {
-        String rawQuery = h.getRequestURI().getRawQuery();
-        return rawQuery != null && (rawQuery.contains("API_TOKEN=" + apiToken) || rawQuery.contains("API_TOKEN=DEBUG"));
-    }
-
-    protected String readText(HttpExchange h) throws IOException {
-        return new String(h.getRequestBody().readAllBytes(), UTF_8);
-    }
-
-    protected void sendText(HttpExchange h, String text) throws IOException {//показывает текст в previw
-        byte[] resp = text.getBytes(UTF_8);
-        h.getResponseHeaders().add("Content-Type", "application/json");
-        h.sendResponseHeaders(200, resp.length);
-        h.getResponseBody().write(resp);
-    }
-
-
-    public void stop() {
-        server.stop(1);
-    }
 }

@@ -13,8 +13,9 @@ public class KVTaskClient {
 
     private String serverURL;
 
-    public KVTaskClient(String serverURL) {
+    public KVTaskClient(String serverURL) throws IOException, InterruptedException {
         this.serverURL = serverURL;
+        register(serverURL);
     }
 
 

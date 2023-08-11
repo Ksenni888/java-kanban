@@ -166,7 +166,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, InterruptedException {
         InMemoryTaskManager manager = Managers.getDefault();
 
         /* Тут создаем файл из задач, в главном main загружаются задачи в программу из этого файла*/

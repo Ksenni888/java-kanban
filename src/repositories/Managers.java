@@ -17,15 +17,17 @@ public class Managers {
         return new InMemoryHistoryManager();
     }
 
-    public static InMemoryTaskManager getDefault() {
+  /*  public static InMemoryTaskManager getDefault() { // было изначально
         return new InMemoryTaskManager();
-    }
+    }*/
+  public static InMemoryTaskManager getDefault() throws IOException, InterruptedException {
+      return new HttpTaskManager("http://localhost:8078");}
 
-    public static HttpTaskManager getDefaultHttpManager() throws IOException, InterruptedException {
+   /* public static HttpTaskManager getDefaultHttpManager() throws IOException, InterruptedException {
         HttpTaskManager httpTaskManager = new HttpTaskManager("http://localhost:8078");
         httpTaskManager.load();
         return httpTaskManager;
-    }
+    }*/
 
     public static FileBackedTasksManager getBackedTaskManager(File file) {
         return FileBackedTasksManager.loadFromFile(file);

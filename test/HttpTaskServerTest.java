@@ -28,7 +28,10 @@ class HttpTaskServerTest extends Tests.TaskManagerTest<HttpTaskManager> {
 
     private final InMemoryTaskManager inMemoryTaskManager = Managers.getDefault();
 
-    KVServer kvServer;
+    private KVServer kvServer;
+
+    HttpTaskServerTest() throws IOException, InterruptedException {
+    }
 
     @BeforeEach
     protected void createKVServer() throws Exception {
